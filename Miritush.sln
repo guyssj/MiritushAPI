@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.API", "Miritush.API\Miritush.API.csproj", "{34749A72-DB9E-48DA-8349-A9928F2657FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.DAL", "Miritush.DAL\Miritush.DAL.csproj", "{D8E8BB58-921D-413C-B720-E09FCFA48C41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34749A72-DB9E-48DA-8349-A9928F2657FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34749A72-DB9E-48DA-8349-A9928F2657FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34749A72-DB9E-48DA-8349-A9928F2657FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34749A72-DB9E-48DA-8349-A9928F2657FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FEA4DF06-04CD-4CAF-A4ED-AC19B5BF70E2}
+	EndGlobalSection
+EndGlobal
