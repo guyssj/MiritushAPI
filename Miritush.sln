@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.API", "Miritush.API\Miritush.API.csproj", "{34749A72-DB9E-48DA-8349-A9928F2657FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.API", "Miritush.API\Miritush.API.csproj", "{34749A72-DB9E-48DA-8349-A9928F2657FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.DAL", "Miritush.DAL\Miritush.DAL.csproj", "{D8E8BB58-921D-413C-B720-E09FCFA48C41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.DAL", "Miritush.DAL\Miritush.DAL.csproj", "{D8E8BB58-921D-413C-B720-E09FCFA48C41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Services", "Miritush.Services\Miritush.Services.csproj", "{59793445-E180-4849-A684-909DFB6CBA75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Tests", "Miritush.Tests\Miritush.Tests.csproj", "{3328E9DD-2D61-454F-B151-3F724E792F0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.DTO", "Miritush.DTO\Miritush.DTO.csproj", "{518E21C8-0509-4B1F-ABF6-5476776B1579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E8BB58-921D-413C-B720-E09FCFA48C41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59793445-E180-4849-A684-909DFB6CBA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59793445-E180-4849-A684-909DFB6CBA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59793445-E180-4849-A684-909DFB6CBA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59793445-E180-4849-A684-909DFB6CBA75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3328E9DD-2D61-454F-B151-3F724E792F0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3328E9DD-2D61-454F-B151-3F724E792F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3328E9DD-2D61-454F-B151-3F724E792F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3328E9DD-2D61-454F-B151-3F724E792F0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

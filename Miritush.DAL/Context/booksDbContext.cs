@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Miritush.DAL.Model
 {
-    public partial class reptouch_booknailContext : DbContext
+    public partial class booksDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public reptouch_booknailContext()
+        public booksDbContext()
         {
         }
 
-        public reptouch_booknailContext(DbContextOptions<reptouch_booknailContext> options)
+        public booksDbContext(DbContextOptions<booksDbContext> options)
             : base(options)
         {
         }

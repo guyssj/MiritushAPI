@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Miritush.DAL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +18,18 @@ namespace Miritush.API.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly booksDbContext dbContext;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, booksDbContext dbContext)
         {
             _logger = logger;
+            this.dbContext = dbContext;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task< IEnumerable<WeatherForecast>>Get()
         {
+            var customerone = await dbContext.Customers.FindAsync(90);
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

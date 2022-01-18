@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
+using Miritush.DAL.Model;
+using Miritush.Services;
+using Miritush.Services.Abstract;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Miritush.API
 {
@@ -26,12 +27,72 @@ namespace Miritush.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddOptions();
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+            });
+            services.AddDbContext<booksDbContext>(opt =>
+            {
+                opt.UseMySQL(Configuration.GetConnectionString("BooksDB"));
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Miritush.API", Version = "v1" });
+                c.DocumentFilter<ReplaceVersionWithExactValueInPath>();
+                c.OperationFilter<RemoveVersionFromParameter>();
+
+                c.DocInclusionPredicate((version, desc) =>
+                {
+                    if (!desc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+
+                    var versions = methodInfo.DeclaringType
+                        .GetCustomAttributes(true)
+                        .OfType<ApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions);
+
+                    var mapVersions = methodInfo
+                        .GetCustomAttributes(true)
+                        .OfType<MapToApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions)
+                        .ToArray();
+
+                    return versions.Any(v => $"v{v}" == version) && (mapVersions.Length == 0 || mapVersions.Any(v => $"v{v}" == version));
+                });
+
+
             });
+            services.AddRouting(opt => opt.LowercaseUrls = true);
+
+
+            AddCoreServices(services);
+
+        }
+
+
+        private class RemoveVersionFromParameter : IOperationFilter
+        {
+            public void Apply(OpenApiOperation operation, OperationFilterContext context)
+            {
+                var versionParameter = operation.Parameters.Single(p => p.Name == "version");
+                operation.Parameters.Remove(versionParameter);
+            }
+        }
+        private class ReplaceVersionWithExactValueInPath : IDocumentFilter
+        {
+            public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+            {
+                var paths = swaggerDoc.Paths
+                    .ToDictionary(
+                        path => path.Key.Replace("v{version}", swaggerDoc.Info.Version),
+                        path => path.Value
+                    );
+                swaggerDoc.Paths = new OpenApiPaths();
+
+                foreach (var path in paths)
+                    swaggerDoc.Paths.Add(path.Key, path.Value);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +104,7 @@ namespace Miritush.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1"));
             }
-
+            app.UseApiVersioning();
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -54,6 +115,11 @@ namespace Miritush.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddCoreServices(IServiceCollection services)
+        {
+            services.AddScoped<ICustomerService, CustomerService>();
         }
     }
 }
