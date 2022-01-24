@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Miritush.API.Model;
 using Miritush.DAL.Model;
 using Miritush.Services;
 using Miritush.Services.Abstract;
@@ -30,15 +31,28 @@ namespace Miritush.API.Controllers
 
         // GET api/<CustomerController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Task<Customer> GetCustomerById(int id)
         {
-            return "value";
+            return _customerService.GetCustomerByIdAsync(id);
+        }
+
+        // GET api/<CustomerController>/0504277550
+        [HttpGet("{phoneNumber}")]
+        public Task<Customer> GetCustomerByPhoneNumber(string phoneNumber)
+        {
+            return _customerService.GetCustomerByPhoneNumberAsync(phoneNumber);
         }
 
         // POST api/<CustomerController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public Task<Customer> CreateCutomer([FromBody] CreateCustomerData customerData)
         {
+           return _customerService.CreateCustomer(
+                customerData.FirstName,
+                customerData.LastName,
+                customerData.PhoneNumber,
+                customerData.Color,
+                customerData.Notes);
         }
 
         // PUT api/<CustomerController>/5
