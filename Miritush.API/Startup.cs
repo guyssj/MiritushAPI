@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,9 @@ using Microsoft.OpenApi.Models;
 using Miritush.DAL.Model;
 using Miritush.Services;
 using Miritush.Services.Abstract;
+using Miritush.Services.DomainProfile;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -32,16 +35,27 @@ namespace Miritush.API
             {
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
-            services.AddDbContext<booksDbContext>(opt =>
-            {
-                opt.UseMySQL(Configuration.GetConnectionString("BooksDB"));
-            });
+            var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
+
+            // Replace 'YourDbContext' with the name of your own DbContext derived class.
+            services.AddDbContext<booksDbContext>(
+                dbContextOptions => dbContextOptions
+                    .UseMySql(Configuration.GetConnectionString("BooksDB"), serverVersion)
+            // // The following three options help with debugging, but should
+            // // be changed or removed for production.
+            // .LogTo(Console.WriteLine, LogLevel.Information)
+            // .EnableSensitiveDataLogging()
+            // .EnableDetailedErrors()
+            );
+
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Miritush.API", Version = "v1" });
                 c.DocumentFilter<ReplaceVersionWithExactValueInPath>();
                 c.OperationFilter<RemoveVersionFromParameter>();
+                c.CustomSchemaIds(type => type.ToString());
 
                 c.DocInclusionPredicate((version, desc) =>
                 {
@@ -65,7 +79,16 @@ namespace Miritush.API
             });
             services.AddRouting(opt => opt.LowercaseUrls = true);
 
+            services.AddScoped(serviceProvider =>
+            {
+                var domainProfile = ActivatorUtilities.GetServiceOrCreateInstance<DomainProfile>(serviceProvider);
 
+                var config = new MapperConfiguration(config => config
+                    .AddProfile(domainProfile)
+                );
+
+                return config.CreateMapper();
+            });
             AddCoreServices(services);
 
         }
@@ -120,6 +143,9 @@ namespace Miritush.API
         private static void AddCoreServices(IServiceCollection services)
         {
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IServicesService, ServicesService>();
+            services.AddScoped<IServiceTypeService, ServiceTypeService>();
+
         }
     }
 }

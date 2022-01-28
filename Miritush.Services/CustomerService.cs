@@ -2,41 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.Services.Abstract;
 
 namespace Miritush.Services
 {
-    public class CustomerService: ICustomerService
+    public class CustomerService : ICustomerService
     {
-       public booksDbContext dbContext { get; }
+        private readonly booksDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public CustomerService(booksDbContext dbContext)
+        public CustomerService(
+            booksDbContext dbContext,
+            IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
-        public async Task<List<Customer>> GetCustomersAsync()
+        public async Task<List<DTO.Customer>> GetCustomersAsync()
         {
-            var customers =  await dbContext.Customers.ToListAsync();
+            var customers = await dbContext.Customers.ToListAsync();
 
-            return customers;
-        
+            return mapper.Map<List<DTO.Customer>>(customers);
+
+
         }
-        public async Task<Customer> GetCustomerByIdAsync(int id)
+        public async Task<DTO.Customer> GetCustomerByIdAsync(int id)
         {
-            return await dbContext.Customers.FindAsync(id);
+            var customer = await dbContext.Customers.FindAsync(id);
+            return mapper.Map<DTO.Customer>(customer);
         }
-        public async Task<Customer> GetCustomerByPhoneNumberAsync(string phoneNumber)
+        public async Task<DTO.Customer> GetCustomerByPhoneNumberAsync(string phoneNumber)
         {
             if (phoneNumber == null)
                 throw new ArgumentNullException(nameof(phoneNumber));
 
-            return await dbContext.Customers.Where(x => x.PhoneNumber == phoneNumber)
+            var customer = await dbContext.Customers.Where(x => x.PhoneNumber == phoneNumber)
                                             .FirstOrDefaultAsync();
+
+            return mapper.Map<DTO.Customer>(customer);
+
         }
-        public async Task<Customer> CreateCustomer(string firstName,
+        public async Task<DTO.Customer> CreateCustomer(string firstName,
                                                    string lastName,
                                                    string phoneNumber,
                                                    string color = "",
@@ -44,16 +54,18 @@ namespace Miritush.Services
         {
             if (string.IsNullOrWhiteSpace(firstName))
                 throw new System.ArgumentException($"'{nameof(firstName)}' cannot be null or whitespace.", nameof(firstName));
-           
+
             if (string.IsNullOrWhiteSpace(lastName))
                 throw new System.ArgumentException($"'{nameof(lastName)}' cannot be null or whitespace.", nameof(lastName));
 
 
-            var customer = await GetCustomerByPhoneNumberAsync(phoneNumber);
+            var customer = await dbContext.Customers.Where(x => x.PhoneNumber == phoneNumber)
+                                            .FirstOrDefaultAsync();
             if (customer != null)
-                return customer;
+                return mapper.Map<DTO.Customer>(customer);
 
-            customer = new Customer()
+
+            customer = new DAL.Model.Customer()
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -65,20 +77,22 @@ namespace Miritush.Services
             dbContext.Customers.Add(customer);
             await dbContext.SaveChangesAsync();
 
-            return customer;
+            return mapper.Map<DTO.Customer>(customer);
 
         }
 
-        public async Task<Customer> UpdateCustomerAsync(int id)
+        public async Task<DTO.Customer> UpdateCustomerAsync(int id)
         {
             var customer = await dbContext.Customers.FindAsync(id);
 
             customer.CustomerId = id;
+
+            return mapper.Map<DTO.Customer>(customer);
         }
 
         public async Task<int> DeleteCustomerAsync(int id)
         {
-            var customerToRemove = await GetCustomerByIdAsync(id);
+            var customerToRemove = await dbContext.Customers.FindAsync(id);
             dbContext.Customers.Remove(customerToRemove);
 
             return await dbContext.SaveChangesAsync();
