@@ -1,4 +1,4 @@
-namespace Miritush.API.Controllers
+namespace Miritush.API.Model
 {
     public class CreateServiceData
     {

@@ -145,6 +145,7 @@ namespace Miritush.API
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IServicesService, ServicesService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
+            services.AddScoped<ILockHoursService, LockHoursService>();
 
         }
     }
