@@ -21,6 +21,11 @@ namespace Miritush.Services.DomainProfile
 
 
             CreateMap<DAL.Model.Lockhour, DTO.LockHour>();
+            CreateMap<DAL.Model.Workhour, DTO.WorkHour>();
+
+
+            CreateMap<DAL.Model.Closeday, DTO.CloseDay>()
+                .ForMember(x=> x.Id , config=> config.MapFrom(x=>x.CloseDaysId));
 
             CreateMap<DAL.Model.Lockhour, DTO.CalendarEvent<DTO.LockHour>>()
                 .ForMember(x => x.Meta, config => config.MapFrom(x => new DTO.LockHour()

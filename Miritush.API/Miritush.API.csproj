@@ -5,6 +5,7 @@
   </PropertyGroup>
 <PropertyGroup>
   <RollForward>Major</RollForward>
+  <UserSecretsId>bd00f29e-a910-41e5-829c-f0140c15b92f</UserSecretsId>
 </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />

@@ -16,12 +16,16 @@ namespace Miritush.API.Controllers
     public class LockHoursController : ControllerBase
     {
         private readonly ILockHoursService _lockHoursService;
+        private readonly ITimeSlotService _timeSlotService;
 
-        public LockHoursController(ILockHoursService lockHoursService)
+        public LockHoursController(ILockHoursService lockHoursService,ITimeSlotService timeSlotService)
         {
             _lockHoursService = lockHoursService;
-
+            _timeSlotService = timeSlotService;
         }
+        [HttpGet("test")]
+        public async Task<List<CalendarEvent<LockHour>>> Test()
+             => await _timeSlotService.GetSlotsExistsAsync(DateTime.Now);
 
         [HttpGet]
         public async Task<List<CalendarEvent<LockHour>>> GetLock()

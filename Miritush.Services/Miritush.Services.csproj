@@ -6,9 +6,6 @@
 <PropertyGroup>
   <RollForward>Major</RollForward>
 </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Abstract\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />

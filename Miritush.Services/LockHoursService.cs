@@ -21,6 +21,10 @@ namespace Miritush.Services
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// Get list Lockhours
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<CalendarEvent<LockHour>>> List()
         {
             var lockHours = await dbContext.Lockhours
@@ -30,6 +34,11 @@ namespace Miritush.Services
             var events = mapper.Map<List<CalendarEvent<LockHour>>>(lockHours);
             return events;
         }
+        /// <summary>
+        /// Get Lock hour by start date
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <returns></returns>
         public async Task<List<DTO.LockHour>> GetByDate(DateTime startDate)
         {
             var lockHours = await dbContext.Lockhours
@@ -39,6 +48,14 @@ namespace Miritush.Services
             return mapper.Map<List<DTO.LockHour>>(lockHours);
         }
 
+        /// <summary>
+        /// Create a Lcokhour
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="startAt"></param>
+        /// <param name="endAt"></param>
+        /// <param name="notes"></param>
+        /// <returns></returns>
         public async Task CreateLockHour(
             DateTime startDate,
             int startAt,

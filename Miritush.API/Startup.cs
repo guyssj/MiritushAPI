@@ -56,7 +56,6 @@ namespace Miritush.API
                 c.DocumentFilter<ReplaceVersionWithExactValueInPath>();
                 c.OperationFilter<RemoveVersionFromParameter>();
                 c.CustomSchemaIds(type => type.ToString());
-
                 c.DocInclusionPredicate((version, desc) =>
                 {
                     if (!desc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
@@ -125,7 +124,10 @@ namespace Miritush.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1"));
+                app.UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1");
+                    c.DisplayRequestDuration();
+                });
             }
             app.UseApiVersioning();
             app.UseHttpsRedirection();
@@ -146,6 +148,10 @@ namespace Miritush.API
             services.AddScoped<IServicesService, ServicesService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<ILockHoursService, LockHoursService>();
+            services.AddScoped<IWorkingHoursService, WorkingHoursService>();
+            services.AddScoped<ITimeSlotService, TimeSlotService>();
+            services.AddScoped<ICalendarService, CalendarService>();
+
 
         }
     }
