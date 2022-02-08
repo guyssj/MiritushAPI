@@ -8,7 +8,7 @@ namespace Miritush.DAL.Model
     public partial class Book
     {
         public int BookId { get; set; }
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public int StartAt { get; set; }
         public int? CustomerId { get; set; }
         public int? ServiceId { get; set; }

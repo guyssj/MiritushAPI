@@ -18,14 +18,14 @@ namespace Miritush.API.Controllers
         private readonly ILockHoursService _lockHoursService;
         private readonly ITimeSlotService _timeSlotService;
 
-        public LockHoursController(ILockHoursService lockHoursService,ITimeSlotService timeSlotService)
+        public LockHoursController(ILockHoursService lockHoursService, ITimeSlotService timeSlotService)
         {
             _lockHoursService = lockHoursService;
             _timeSlotService = timeSlotService;
         }
-        [HttpGet("test")]
-        public async Task<List<CalendarEvent<LockHour>>> Test()
-             => await _timeSlotService.GetSlotsExistsAsync(DateTime.Now);
+        [HttpGet("test/{duration}")]
+        public async Task<List<TimeSlot>> Test(int duration)
+             => await _timeSlotService.GetSlotsExistsAsync(DateTime.Now, duration);
 
         [HttpGet]
         public async Task<List<CalendarEvent<LockHour>>> GetLock()

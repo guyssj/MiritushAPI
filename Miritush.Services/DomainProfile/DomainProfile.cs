@@ -25,21 +25,21 @@ namespace Miritush.Services.DomainProfile
 
 
             CreateMap<DAL.Model.Closeday, DTO.CloseDay>()
-                .ForMember(x=> x.Id , config=> config.MapFrom(x=>x.CloseDaysId));
+                .ForMember(x => x.Id, config => config.MapFrom(x => x.CloseDaysId));
 
             CreateMap<DAL.Model.Lockhour, DTO.CalendarEvent<DTO.LockHour>>()
                 .ForMember(x => x.Meta, config => config.MapFrom(x => new DTO.LockHour()
                 {
                     IdLockHours = x.IdLockHours,
-                    StartDate = x.StartDate.GetValueOrDefault(),
-                    StartAt = x.StartAt.GetValueOrDefault(),
-                    EndAt = x.EndAt.GetValueOrDefault(),
+                    StartDate = x.StartDate,
+                    StartAt = x.StartAt,
+                    EndAt = x.EndAt,
                     Notes = x.Notes
                 }))
                 .ForMember(x => x.StartTime, config => config.MapFrom(
-                     x => x.StartDate.Value.AddMinutes(x.StartAt.Value)))
+                     x => x.StartDate.AddMinutes(x.StartAt)))
                 .ForMember(x => x.EndTime, config => config.MapFrom(
-                     x => x.StartDate.Value.AddMinutes(x.EndAt.Value)))
+                     x => x.StartDate.AddMinutes(x.EndAt)))
                 .ForMember(x => x.Title, config => config.MapFrom(x => "זמן נעול"));
 
         }

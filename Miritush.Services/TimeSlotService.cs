@@ -22,31 +22,71 @@ namespace Miritush.Services
             this.mapper = mapper;
         }
 
-        public async Task< List<TimeSlot>> GetSlotsExistsAsync(DateTime date)
+        public async Task<List<TimeSlot>> GetSlotsExistsAsync(DateTime date, int duration = 0)
         {
-            var workHour = await dbContext.Workhours.FindAsync(date.DayOfWeek);
+            var workHour = await dbContext.Workhours.FindAsync(((int)date.DayOfWeek));
             var timeSlotList = new List<TimeSlot>();
-            for (int i = workHour.OpenTime; i <= workHour.CloseTime; i+=30)
+
+            var MIN_AFTER_WORK = await dbContext.Settings.FindAsync("MIN_AFTER_WORK");
+            var minAfterWork = int.Parse(MIN_AFTER_WORK.SettingValue);
+            for (int i = workHour.OpenTime; i <= workHour.CloseTime; i += 30)
             {
                 var timeSlot = new TimeSlot()
                 {
                     Id = i,
                     Time = TimeSpan.FromMinutes(i).ToString(@"hh\:mm"),
                 };
-               timeSlotList.Add(timeSlot);
+                timeSlotList.Add(timeSlot);
             }
 
-            var books = await dbContext.Books.Where(x => x.StartDate == date).ToListAsync();
-            var exsitSlots = new List<int>();
+            var books = await dbContext.Books
+                .Where(x => x.StartDate.Date == date.Date)
+                .ToListAsync();
+
+            var LockHours = await dbContext.Lockhours
+                .Where(x => x.StartDate.Date == date.Date)
+                .ToListAsync();
+
+            var existSlots = new List<int>();
             books.ForEach(x =>
             {
-                for (int i = x.StartAt; i < x.StartAt + x.Durtion; i+=5)
+                for (int i = x.StartAt; i < x.StartAt + x.Durtion; i += 5)
                 {
-                    exsitSlots.Add(i);
+                    existSlots.Add(i);
+                    if (i == x.StartAt + x.Durtion - 5)
+                    {
+                        timeSlotList.Add(new TimeSlot()
+                        {
+                            Id = i + 5,
+                            Time = TimeSpan.FromMinutes(i + 5).ToString(@"hh\:mm")
+                        });
+                    }
+                }
+
+            });
+
+            LockHours.ForEach(x =>
+            {
+                for (int i = x.StartAt; i < x.EndAt; i += 5)
+                {
+                    existSlots.Add(i);
                 }
             });
 
-            return timeSlotList;
+            existSlots = existSlots
+                 .Distinct()
+                 .OrderBy(x => x)
+                 .ToList();
+
+            var filterd = timeSlotList
+                .Where(x => !existSlots.Any(y => y == x.Id))
+                    .Where(x => !existSlots.Any(j => j > x.Id && j < (x.Id + duration)))
+                .Where(x => workHour.CloseTime + minAfterWork > (x.Id + duration))
+                .ToList();
+
+            return filterd
+                .OrderBy(x => x.Id)
+                .ToList();
         }
 
     }

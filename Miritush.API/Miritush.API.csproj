@@ -2,11 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>658995bb-38d8-4a0d-863b-83cf50de0b64</UserSecretsId>
   </PropertyGroup>
-<PropertyGroup>
-  <RollForward>Major</RollForward>
-  <UserSecretsId>bd00f29e-a910-41e5-829c-f0140c15b92f</UserSecretsId>
-</PropertyGroup>
+
+  <PropertyGroup>
+    <RollForward>Major</RollForward>
+    <UserSecretsId>bd00f29e-a910-41e5-829c-f0140c15b92f</UserSecretsId>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.8">

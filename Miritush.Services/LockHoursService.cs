@@ -42,7 +42,7 @@ namespace Miritush.Services
         public async Task<List<DTO.LockHour>> GetByDate(DateTime startDate)
         {
             var lockHours = await dbContext.Lockhours
-                .Where(x => x.StartDate.Value == startDate)
+                .Where(x => x.StartDate.Date == startDate.Date)
                 .ToListAsync();
 
             return mapper.Map<List<DTO.LockHour>>(lockHours);
@@ -87,12 +87,12 @@ namespace Miritush.Services
         {
             var slots = new List<int>();
             var lockHours = await dbContext.Lockhours
-                .Where(x => x.StartDate.Value == date)
+                .Where(x => x.StartDate.Date == date.Date)
                 .ToListAsync();
 
             foreach (var lockHour in lockHours)
             {
-                for (int i = lockHour.StartAt.Value; i < lockHour.EndAt.Value; i += 5)
+                for (int i = lockHour.StartAt; i < lockHour.EndAt; i += 5)
                 {
                     slots.Add(i);
                 }

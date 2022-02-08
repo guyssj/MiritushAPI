@@ -7,6 +7,6 @@ namespace Miritush.Services.Abstract
 {
     public interface ITimeSlotService
     {
-        Task<List<TimeSlot>> GetSlotsExistsAsync(DateTime date);
+        Task<List<TimeSlot>> GetSlotsExistsAsync(DateTime date, int duration = 0);
     }
 }
