@@ -17,15 +17,17 @@ namespace Miritush.API.Controllers
     {
         private readonly ILockHoursService _lockHoursService;
         private readonly ITimeSlotService _timeSlotService;
+        private readonly ICalendarService calendarService;
 
-        public LockHoursController(ILockHoursService lockHoursService, ITimeSlotService timeSlotService)
+        public LockHoursController(ILockHoursService lockHoursService, ITimeSlotService timeSlotService, ICalendarService calendarService)
         {
             _lockHoursService = lockHoursService;
             _timeSlotService = timeSlotService;
+            this.calendarService = calendarService;
         }
         [HttpGet("test/{duration}")]
-        public async Task<List<TimeSlot>> Test(int duration)
-             => await _timeSlotService.GetSlotsExistsAsync(DateTime.Now, duration);
+        public async Task<ListResult<FreeSlots>> Test(int duration, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+             => await calendarService.GetFreeDaysAsync(DateTime.Now, duration, pageNumber, pageSize);
 
         [HttpGet]
         public async Task<List<CalendarEvent<LockHour>>> GetLock()

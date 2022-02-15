@@ -124,7 +124,8 @@ namespace Miritush.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => {
+                app.UseSwaggerUI(c =>
+                {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1");
                     c.DisplayRequestDuration();
                 });
@@ -149,10 +150,8 @@ namespace Miritush.API
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<ILockHoursService, LockHoursService>();
             services.AddScoped<IWorkingHoursService, WorkingHoursService>();
-            services.AddScoped<ITimeSlotService, TimeSlotService>();
-            services.AddScoped<ICalendarService, CalendarService>();
-
-
+            services.AddTransient<ITimeSlotService, TimeSlotService>();
+            services.AddTransient<ICalendarService, CalendarService>();
         }
     }
 }

@@ -16,28 +16,29 @@ namespace Miritush.Services
         private readonly booksDbContext dbContext;
         private readonly IMapper mapper;
 
-        public TimeSlotService(booksDbContext dbContext, IMapper mapper)
+        public TimeSlotService(
+            booksDbContext dbContext,
+            IMapper mapper)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<List<TimeSlot>> GetSlotsExistsAsync(DateTime date, int duration = 0)
+        public async Task<List<TimeSlot>> GetTimeSlotsAsync(
+            DateTime date,
+            int duration = 0)
         {
+            // if (await calendarService.isCloseDayAsync(date))
+            //     return new List<TimeSlot>();
+
             var workHour = await dbContext.Workhours.FindAsync(((int)date.DayOfWeek));
-            var timeSlotList = new List<TimeSlot>();
+            if (workHour == null)
+                return new List<TimeSlot>();
 
             var MIN_AFTER_WORK = await dbContext.Settings.FindAsync("MIN_AFTER_WORK");
             var minAfterWork = int.Parse(MIN_AFTER_WORK.SettingValue);
-            for (int i = workHour.OpenTime; i <= workHour.CloseTime; i += 30)
-            {
-                var timeSlot = new TimeSlot()
-                {
-                    Id = i,
-                    Time = TimeSpan.FromMinutes(i).ToString(@"hh\:mm"),
-                };
-                timeSlotList.Add(timeSlot);
-            }
+
+            var timeSlotList = GenerateTimeSlots(workHour);
 
             var books = await dbContext.Books
                 .Where(x => x.StartDate.Date == date.Date)
@@ -62,7 +63,6 @@ namespace Miritush.Services
                         });
                     }
                 }
-
             });
 
             LockHours.ForEach(x =>
@@ -87,6 +87,21 @@ namespace Miritush.Services
             return filterd
                 .OrderBy(x => x.Id)
                 .ToList();
+        }
+
+        private List<TimeSlot> GenerateTimeSlots(Workhour workHour)
+        {
+            var timeSlotList = new List<TimeSlot>();
+            for (int i = workHour.OpenTime; i <= workHour.CloseTime; i += 30)
+            {
+                var timeSlot = new TimeSlot()
+                {
+                    Id = i,
+                    Time = TimeSpan.FromMinutes(i).ToString(@"hh\:mm"),
+                };
+                timeSlotList.Add(timeSlot);
+            }
+            return timeSlotList;
         }
 
     }
