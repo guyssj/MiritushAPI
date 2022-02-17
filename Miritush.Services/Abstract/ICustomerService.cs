@@ -15,5 +15,14 @@ namespace Miritush.Services.Abstract
         Task<DTO.Customer> GetCustomerByIdAsync(int id);
         Task<DTO.Customer> GetCustomerByPhoneNumberAsync(string phoneNumber);
         Task<int> DeleteCustomerAsync(int id);
+        Task<DTO.Customer> UpdateCustomerAsync(
+            int id,
+            string firstName,
+            string lastName,
+            string phoneNumber,
+            string color,
+            string notes,
+            int otp = 0,
+            bool active = false);
     }
 }

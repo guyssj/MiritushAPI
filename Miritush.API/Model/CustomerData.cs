@@ -2,7 +2,7 @@
 
 namespace Miritush.API.Model
 {
-    public class CreateCustomerData
+    public class CustomerData
     {
         public int Id { get; set; }
 

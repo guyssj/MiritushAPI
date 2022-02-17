@@ -37,7 +37,7 @@ namespace Miritush.API.Controllers
         }
 
         // GET api/<CustomerController>/0504277550
-        [HttpGet("getByPhoneNumber")]
+        [HttpGet("phoneNumber")]
         public Task<DTO.Customer> GetCustomerByPhoneNumber([FromQuery] string phoneNumber)
         {
             return _customerService.GetCustomerByPhoneNumberAsync(phoneNumber);
@@ -45,7 +45,7 @@ namespace Miritush.API.Controllers
 
         // POST api/<CustomerController>
         [HttpPost]
-        public Task<DTO.Customer> CreateCutomer([FromBody] CreateCustomerData customerData)
+        public Task<DTO.Customer> CreateCutomer([FromBody] CustomerData customerData)
         {
             return _customerService.CreateCustomer(
                  customerData.FirstName,
@@ -61,6 +61,18 @@ namespace Miritush.API.Controllers
         public async void Delete(int id)
         {
             await _customerService.DeleteCustomerAsync(id);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<DTO.Customer> Update(int id,[FromBody] CustomerData data)
+        {
+           return await _customerService.UpdateCustomerAsync(
+                data.Id,
+                data.FirstName,
+                data.LastName,
+                data.PhoneNumber,
+                data.Color,
+                data.Notes);
         }
     }
 }

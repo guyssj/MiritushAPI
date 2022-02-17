@@ -33,6 +33,9 @@ namespace Miritush.DAL.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
+                var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
+
+                optionsBuilder.UseMySql("server=localhost;user=root;password=root;database=reptouch_bookNail;port=8889", serverVersion);
             }
         }
 
@@ -230,6 +233,8 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
+                    .HasCharSet("utf8")
+                    .UseCollation("utf8_general_ci")
                     .HasDefaultValueSql("'NULL'");
             });
 

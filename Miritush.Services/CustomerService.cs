@@ -81,11 +81,27 @@ namespace Miritush.Services
 
         }
 
-        public async Task<DTO.Customer> UpdateCustomerAsync(int id)
+        public async Task<DTO.Customer> UpdateCustomerAsync(
+            int id,
+            string firstName,
+            string lastName,
+            string phoneNumber,
+            string color,
+            string notes,
+            int otp = 0,
+            bool active = false)
         {
             var customer = await dbContext.Customers.FindAsync(id);
+            var bypeActive = active ? 0 : 1;
 
             customer.CustomerId = id;
+            customer.FirstName = firstName;
+            customer.LastName = lastName;
+            customer.PhoneNumber = phoneNumber;
+            customer.Color = color;
+            customer.Notes = notes;
+            customer.Otp = otp;
+            customer.Active = (byte)bypeActive;
 
             return mapper.Map<DTO.Customer>(customer);
         }

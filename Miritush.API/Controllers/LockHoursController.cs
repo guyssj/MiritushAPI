@@ -25,10 +25,6 @@ namespace Miritush.API.Controllers
             _timeSlotService = timeSlotService;
             this.calendarService = calendarService;
         }
-        [HttpGet("test/{duration}")]
-        public async Task<ListResult<FreeSlots>> Test(int duration, [FromQuery] int pageNumber, [FromQuery] int pageSize)
-             => await calendarService.GetFreeDaysAsync(DateTime.Now, duration, pageNumber, pageSize);
-
         [HttpGet]
         public async Task<List<CalendarEvent<LockHour>>> GetLock()
              => await _lockHoursService.List();

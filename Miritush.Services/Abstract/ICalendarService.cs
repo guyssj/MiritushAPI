@@ -8,13 +8,15 @@ namespace Miritush.Services.Abstract
 {
     public interface ICalendarService
     {
-        Task<List<CloseDay>> GetCloseDayAndHoliday();
-        Task<List<DTO.CloseDay>> GetCloseDaysAsync();
+        Task CreateCloseDay(DateTime date, string notes);
+        Task DeleteCloseDay(int id);
+        Task<List<CloseDay>> GetCloseDayAndHolidayAsync();
         Task<ListResult<FreeSlots>> GetFreeDaysAsync(
             DateTime startDate,
             int duration,
             int pageNumber,
             int pageSize);
         Task<bool> isCloseDayAsync(DateTime date);
+        Task UpdateHolidays();
     }
 }

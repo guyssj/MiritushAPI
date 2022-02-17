@@ -48,7 +48,7 @@ namespace Miritush.API
             // .EnableDetailedErrors()
             );
 
-
+            services.AddHttpClient();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -150,8 +150,8 @@ namespace Miritush.API
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<ILockHoursService, LockHoursService>();
             services.AddScoped<IWorkingHoursService, WorkingHoursService>();
-            services.AddTransient<ITimeSlotService, TimeSlotService>();
-            services.AddTransient<ICalendarService, CalendarService>();
+            services.AddScoped<ITimeSlotService, TimeSlotService>();
+            services.AddScoped<ICalendarService, CalendarService>();
         }
     }
 }
