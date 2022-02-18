@@ -20,6 +20,10 @@ namespace Miritush.Services.DomainProfile
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.ServiceTypeName));
 
 
+            CreateMap<DAL.Model.User, DTO.User>()
+                .ForMember(x=>x.Name,config =>config.MapFrom(x=>x.UserName));
+
+
             CreateMap<DAL.Model.Lockhour, DTO.LockHour>();
             CreateMap<DAL.Model.Workhour, DTO.WorkHour>();
 
