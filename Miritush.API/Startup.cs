@@ -152,6 +152,8 @@ namespace Miritush.API
             services.AddScoped<IWorkingHoursService, WorkingHoursService>();
             services.AddScoped<ITimeSlotService, TimeSlotService>();
             services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IUserService, UserService>();
+
         }
     }
 }

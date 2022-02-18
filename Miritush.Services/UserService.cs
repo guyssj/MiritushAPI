@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.Services.Abstract;
 using System;
+using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Miritush.DTO;
 
 namespace Miritush.Services
 {
@@ -29,9 +31,9 @@ namespace Miritush.Services
 
             if (user == null)
                 return null; //[GG] change to exption handler
-            return mapper.Map<DTO.User>(user); 
+            return mapper.Map<DTO.User>(user);
         }
-        public async Task CheckPasswordAsync(string userName,string password)
+        public async Task<bool> VerifyPasswordAsync(string userName, string password)
         {
             if (userName == null || password == null)
                 throw new ArgumentNullException(nameof(userName));
@@ -40,7 +42,14 @@ namespace Miritush.Services
                 .Where(x => x.UserName == userName)
                 .FirstOrDefaultAsync();
 
-            user.
+            var passwordHasher = new PasswordHasher<DAL.Model.User>();
+            var res = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+
+            return res == PasswordVerificationResult.Success;
+        }
+        public async Task<DTO.AuthResult> Login(string userName, string password)
+        {
+
         }
 
     }

@@ -35,7 +35,7 @@ namespace Miritush.DAL.Model
             {
                 var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
 
-                optionsBuilder.UseMySql("server=localhost;user=root;password=root;database=reptouch_bookNail;port=8889", serverVersion);
+                // optionsBuilder.UseMySql("server=localhost;user=root;password=root;database=reptouch_bookNail;port=8889", serverVersion);
             }
         }
 
