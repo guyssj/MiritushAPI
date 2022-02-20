@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Attributes;
 using Miritush.API.Model;
 using Miritush.DTO;
+using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,22 +22,25 @@ namespace Miritush.API.Controllers
         {
             _calendarService = calendarService;
         }
+
         [HttpGet("closeDays")]
         public async Task<List<CloseDay>> GetCloseDayAndHoliday()
-
             => await _calendarService.GetCloseDayAndHolidayAsync();
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpPost("closeDays")]
         [ValidateModel]
         public async Task<IActionResult> CreateCloseDay(CreateCloseDayData data)
         {
+            var use = User.Identity;
             await _calendarService.CreateCloseDay(data.Date, data.Notes);
             return StatusCode(StatusCodes.Status201Created);
         }
 
+        [Authorize(Roles = UserRoles.Admin)]
         [HttpDelete("closeDays/{id}")]
         [ValidateModel]
-        public async Task<IActionResult> CreateCloseDay([FromRoute] int id)
+        public async Task<IActionResult> DeleteCloseDay([FromRoute] int id)
         {
             await _calendarService.DeleteCloseDay(id);
             return Ok();
@@ -50,6 +55,6 @@ namespace Miritush.API.Controllers
                 data.pageSize);
         [HttpGet("closeDays/updateHolidays")]
         public async Task UpdateHoliday()
-         => await _calendarService.UpdateHolidays();
+         => await _calendarService.UpdateHolidaysAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Authentication;
@@ -20,12 +21,13 @@ namespace Miritush.API.Controllers
         {
             this.userService = userService;
         }
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginData data)
+        public async Task<DTO.AuthResult> Login(LoginData data)
         {
 
-            await userService.CheckPasswordAsync(data.UserName, data.Password);
-            return Ok();
+           return await userService.Login(data.UserName, data.Password);
+            
         }
     }
 }

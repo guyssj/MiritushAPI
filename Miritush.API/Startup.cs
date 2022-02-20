@@ -1,31 +1,40 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Miritush.API.Extensions;
 using Miritush.DAL.Model;
 using Miritush.Services;
 using Miritush.Services.Abstract;
 using Miritush.Services.DomainProfile;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Miritush.API
 {
     public class Startup
     {
+        private readonly IConfiguration configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,16 +49,26 @@ namespace Miritush.API
             // Replace 'YourDbContext' with the name of your own DbContext derived class.
             services.AddDbContext<booksDbContext>(
                 dbContextOptions => dbContextOptions
-                    .UseMySql(Configuration.GetConnectionString("BooksDB"), serverVersion)
+                    .UseMySql(configuration.GetConnectionString("BooksDB"), serverVersion)
             // // The following three options help with debugging, but should
             // // be changed or removed for production.
             // .LogTo(Console.WriteLine, LogLevel.Information)
             // .EnableSensitiveDataLogging()
             // .EnableDetailedErrors()
             );
+            services.AddHttpContextAccessor();
 
             services.AddHttpClient();
-            services.AddControllers();
+            services
+                .AddControllers(config =>
+                {
+                    config.EnableEndpointRouting = false;
+                    var authorizationPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    config.Filters.Add(new AuthorizeFilter(authorizationPolicy));
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Miritush.API", Version = "v1" });
@@ -73,6 +92,34 @@ namespace Miritush.API
 
                     return versions.Any(v => $"v{v}" == version) && (mapVersions.Length == 0 || mapVersions.Any(v => $"v{v}" == version));
                 });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                  {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                        Reference = new OpenApiReference
+                            {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                        }
+                    });
 
 
             });
@@ -89,6 +136,8 @@ namespace Miritush.API
                 return config.CreateMapper();
             });
             AddCoreServices(services);
+            AddAuthServices(services);
+
 
         }
 
@@ -134,8 +183,9 @@ namespace Miritush.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -154,6 +204,57 @@ namespace Miritush.API
             services.AddScoped<ICalendarService, CalendarService>();
             services.AddScoped<IUserService, UserService>();
 
+        }
+        private void AddAuthServices(IServiceCollection services)
+        {
+
+            var secretKey = configuration.GetValue<string>("Auth:Secret");
+            var key = Encoding.UTF8.GetBytes(secretKey);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                //TODO::
+                //https://www.gwllosa.com/post/dynamic-key-validation-with-jwt-in-asp-net-core
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    RequireSignedTokens = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration.GetValue<string>("Auth:ValidIssuer"),
+                    ValidateAudience = true,
+                    ValidAudience = configuration.GetValue<string>("Auth:ValidAudience"),
+                    ValidateLifetime = true
+                };
+
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Request.Headers.TryGetValue("Authorization", out var token);
+
+                        if (string.IsNullOrWhiteSpace(token.ToString()))
+                            context.Request.Headers.TryGetValue("authorization", out token);
+
+                        context.Token = token.ToString()
+                            .Replace("Bearer ", "")
+                            .ToString();
+
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = async context =>
+                    {
+                         context.Principal = await context.HttpContext.AttachIdentityToContext(context.Principal);
+                    }
+                };
+            });
         }
     }
 }

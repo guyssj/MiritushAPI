@@ -140,7 +140,7 @@ namespace Miritush.Services
             return mapper.Map<List<CloseDay>>(closeDays);
         }
 
-        public async Task UpdateHolidays()
+        public async Task UpdateHolidaysAsync()
         {
             var request = new HttpRequestMessage(
                 HttpMethod.Get,

@@ -17,6 +17,6 @@ namespace Miritush.Services.Abstract
             int pageNumber,
             int pageSize);
         Task<bool> isCloseDayAsync(DateTime date);
-        Task UpdateHolidays();
+        Task UpdateHolidaysAsync();
     }
 }

@@ -9,7 +9,8 @@ namespace Miritush.Services.Abstract
 {
     public interface IUserService
     {
-        Task<bool> CheckPasswordAsync(string userName, string password);
         Task<DTO.User> GetAsync(int id);
+        Task<AuthResult> Login(string userName, string password);
+        Task<bool> VerifyUserPasswordAsync(string userName, string password);
     }
 }

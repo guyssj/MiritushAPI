@@ -6,8 +6,5 @@
 <PropertyGroup>
   <RollForward>Major</RollForward>
 </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Dtos\" />
-  </ItemGroup>
 
 </Project>

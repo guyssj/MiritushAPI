@@ -23,6 +23,15 @@ namespace Miritush.Services.DomainProfile
             CreateMap<DAL.Model.User, DTO.User>()
                 .ForMember(x=>x.Name,config =>config.MapFrom(x=>x.UserName));
 
+            CreateMap<DAL.Model.User, DTO.BookIdentity>()
+                .ForMember(x => x.Name, config => config.MapFrom(x => x.UserName))
+                .ForMember(x => x.UserId, config => config.MapFrom(x => x.Id));
+                //.ForMember(x => x.RoleName, config => config.MapFrom(x => x.Id > 0 ? "Admin" : "User"));
+
+            CreateMap<DAL.Model.Customer, DTO.BookIdentity>()
+                .ForMember(x => x.Name, config => config.MapFrom(x => x.PhoneNumber))
+                .ForMember(x => x.UserId, config => config.MapFrom(x => x.CustomerId))
+                .ForMember(x => x.RoleName, config => config.MapFrom(x => !string.IsNullOrWhiteSpace(x.PhoneNumber) ? "User" : "Admin"));
 
             CreateMap<DAL.Model.Lockhour, DTO.LockHour>();
             CreateMap<DAL.Model.Workhour, DTO.WorkHour>();

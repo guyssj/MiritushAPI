@@ -6,15 +6,17 @@
 		<RollForward>Major</RollForward>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="10.1.1"/>
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1"/>
-		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0"/>
-		<PackageReference Include="MySqlConnector" Version="1.3.13"/>
-		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.4"/>
-		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.10"/>
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.1" />
+		<PackageReference Include="MySqlConnector" Version="1.3.13" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.10" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Miritush.DAL\Miritush.DAL.csproj"/>
-		<ProjectReference Include="..\Miritush.DTO\Miritush.DTO.csproj"/>
+		<ProjectReference Include="..\Miritush.DAL\Miritush.DAL.csproj" />
+		<ProjectReference Include="..\Miritush.DTO\Miritush.DTO.csproj" />
 	</ItemGroup>
 </Project>
