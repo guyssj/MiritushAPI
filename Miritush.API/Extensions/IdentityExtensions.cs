@@ -24,14 +24,18 @@ namespace Miritush.API.Extensions
                .Where(user => user.UserName == username)
                .FirstOrDefaultAsync();
 
+            DAL.Model.Customer customer = null;
             if (user == null)
             {
-                var user2 = await dbcontext.Customers
-                    .Where(customer=>customer.PhoneNumber == username)
+                customer = await dbcontext.Customers
+                    .Where(customer => customer.PhoneNumber == username)
                     .FirstOrDefaultAsync();
+                if (customer == null)
+                    throw new System.Exception(); //[GG]change to expection handler
             }
 
-            var identity = mapper.Map<DTO.BookIdentity>(user);
+
+            var identity = mapper.Map<DTO.BookIdentity>(user == null ? customer : user);
             identity.AddClaims(((ClaimsIdentity)principal.Identity).Claims);
 
             return new ClaimsPrincipal(identity);

@@ -17,10 +17,12 @@ namespace Miritush.API.Controllers
     public class CalendarController : ControllerBase
     {
         private readonly ICalendarService _calendarService;
+        private readonly IBookService bookService;
 
-        public CalendarController(ICalendarService calendarService)
+        public CalendarController(ICalendarService calendarService, IBookService bookService)
         {
             _calendarService = calendarService;
+            this.bookService = bookService;
         }
 
         [HttpGet("closeDays")]
@@ -33,6 +35,7 @@ namespace Miritush.API.Controllers
         public async Task<IActionResult> CreateCloseDay(CreateCloseDayData data)
         {
             var use = User.Identity;
+            await bookService.GetBooksForCalendar();
             await _calendarService.CreateCloseDay(data.Date, data.Notes);
             return StatusCode(StatusCodes.Status201Created);
         }
@@ -53,6 +56,8 @@ namespace Miritush.API.Controllers
                 data.duration.GetValueOrDefault(),
                 data.pageNumber,
                 data.pageSize);
+
+        [AllowAnonymous]
         [HttpGet("closeDays/updateHolidays")]
         public async Task UpdateHoliday()
          => await _calendarService.UpdateHolidaysAsync();

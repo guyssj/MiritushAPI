@@ -12,5 +12,7 @@ namespace Miritush.DTO
         public DateTime EndTime { get; set; }
         public DateTime StartTime { get; set; }
         public T Meta { get; set; }
+        public ServiceType ServiceType { get; set; }
+        public Customer Customer { get; set; }
     }
 }

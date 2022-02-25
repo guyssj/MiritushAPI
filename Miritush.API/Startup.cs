@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Miritush.API
 {
@@ -57,8 +61,20 @@ namespace Miritush.API
             // .EnableDetailedErrors()
             );
             services.AddHttpContextAccessor();
+            services.AddHttpClient("GlobalSms", c =>
+            {
 
-            services.AddHttpClient();
+                var GlobalSmsUrl = configuration.GetValue<string>("SmsProvider:BaseUrl");
+                var ApiKey = configuration.GetValue<string>("SmsProvider:ApiKey");
+                var queryParams = new Dictionary<string, string>();
+                queryParams["ApiKey"] = ApiKey;
+                queryParams["txtAddInf"] = "LocalMessageID";
+
+                var BaseWithQuery = QueryHelpers.AddQueryString(GlobalSmsUrl, queryParams);
+                c.BaseAddress = new Uri(BaseWithQuery);
+            });
+
+
             services
                 .AddControllers(config =>
                 {
@@ -68,7 +84,17 @@ namespace Miritush.API
                         .Build();
                     config.Filters.Add(new AuthorizeFilter(authorizationPolicy));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
+                .SetCompatibilityVersion(CompatibilityVersion.Latest)
+                .AddNewtonsoftJson(config =>
+                {
+                    // config.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ssZ";
+                    config.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    config.UseCamelCasing(true);
+                })
+                .AddJsonOptions(conf =>
+                {
+                    conf.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Miritush.API", Version = "v1" });
@@ -176,7 +202,13 @@ namespace Miritush.API
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1");
+                    c.EnableValidator();
+                    c.EnableDeepLinking();
+                    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
                     c.DisplayRequestDuration();
+                    c.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Example);
+                    c.EnableFilter();
+                    c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
                 });
             }
             app.UseApiVersioning();
@@ -203,7 +235,8 @@ namespace Miritush.API
             services.AddScoped<ITimeSlotService, TimeSlotService>();
             services.AddScoped<ICalendarService, CalendarService>();
             services.AddScoped<IUserService, UserService>();
-
+            services.AddScoped<IUserContextService, UserContextService>();
+            services.AddScoped<IBookService, BookService>();
         }
         private void AddAuthServices(IServiceCollection services)
         {
@@ -251,7 +284,7 @@ namespace Miritush.API
                     },
                     OnTokenValidated = async context =>
                     {
-                         context.Principal = await context.HttpContext.AttachIdentityToContext(context.Principal);
+                        context.Principal = await context.HttpContext.AttachIdentityToContext(context.Principal);
                     }
                 };
             });

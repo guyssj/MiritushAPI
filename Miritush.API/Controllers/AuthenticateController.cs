@@ -23,11 +23,23 @@ namespace Miritush.API.Controllers
         }
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<DTO.AuthResult> Login(LoginData data)
+        public async Task<DTO.AuthResult> Login([FromBody] LoginData data)
         {
 
-           return await userService.Login(data.UserName, data.Password);
-            
+            return await userService.Login(
+                data.Username,
+                data.Password,
+                data.grant_type,
+                data.PhoneNumber,
+                data.OtpCode);
+
+        }
+        [AllowAnonymous]
+        [HttpPost("passwordless")]
+        public async Task<IActionResult> PasswordlessSms([FromBody] PasswordlessData data)
+        {
+            await userService.CreateOtpToCustomer(data.PhoneNumber);
+            return NoContent();
         }
     }
 }

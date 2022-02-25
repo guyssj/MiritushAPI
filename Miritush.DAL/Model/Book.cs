@@ -10,10 +10,10 @@ namespace Miritush.DAL.Model
         public int BookId { get; set; }
         public DateTime StartDate { get; set; }
         public int StartAt { get; set; }
-        public int? CustomerId { get; set; }
-        public int? ServiceId { get; set; }
-        public int? Durtion { get; set; }
-        public int? ServiceTypeId { get; set; }
+        public int CustomerId { get; set; }
+        public int ServiceId { get; set; }
+        public int Durtion { get; set; }
+        public int ServiceTypeId { get; set; }
         public string Notes { get; set; }
 
         public virtual Customer Customer { get; set; }

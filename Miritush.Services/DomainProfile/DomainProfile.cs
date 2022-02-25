@@ -19,14 +19,17 @@ namespace Miritush.Services.DomainProfile
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.ServiceTypeId))
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.ServiceTypeName));
 
-
             CreateMap<DAL.Model.User, DTO.User>()
-                .ForMember(x=>x.Name,config =>config.MapFrom(x=>x.UserName));
+                .ForMember(x => x.Name, config => config.MapFrom(x => x.UserName));
+
+            CreateMap<DAL.Model.Book, DTO.Book>()
+                .ForMember(x => x.Id, config => config.MapFrom(x => x.BookId))
+                .ForMember(x => x.Duration, config => config.MapFrom(x => x.Durtion));
 
             CreateMap<DAL.Model.User, DTO.BookIdentity>()
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.UserName))
                 .ForMember(x => x.UserId, config => config.MapFrom(x => x.Id));
-                //.ForMember(x => x.RoleName, config => config.MapFrom(x => x.Id > 0 ? "Admin" : "User"));
+            //.ForMember(x => x.RoleName, config => config.MapFrom(x => x.Id > 0 ? "Admin" : "User"));
 
             CreateMap<DAL.Model.Customer, DTO.BookIdentity>()
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.PhoneNumber))
@@ -39,6 +42,24 @@ namespace Miritush.Services.DomainProfile
 
             CreateMap<DAL.Model.Closeday, DTO.CloseDay>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.CloseDaysId));
+
+
+            CreateMap<DAL.Model.Book, DTO.CalendarEvent<DTO.Book>>()
+                .ForMember(x => x.Meta, config => config.MapFrom(x => new DTO.Book()
+                {
+                    Id = x.BookId,
+                    CustomerId = x.CustomerId,
+                    ServiceId = x.ServiceId,
+                    ServiceTypeId = x.ServiceTypeId,
+                    Duration = x.Durtion,
+                    StartDate = x.StartDate,
+                    StartAt = x.StartAt,
+                    Notes = x.Notes
+                }))
+                .ForMember(x => x.StartTime, config => config.MapFrom(
+                     x => x.StartDate.AddMinutes(x.StartAt)))
+                .ForMember(x => x.EndTime, config => config.MapFrom(
+                     x => x.StartDate.AddMinutes(x.StartAt + x.Durtion)));
 
             CreateMap<DAL.Model.Lockhour, DTO.CalendarEvent<DTO.LockHour>>()
                 .ForMember(x => x.Meta, config => config.MapFrom(x => new DTO.LockHour()

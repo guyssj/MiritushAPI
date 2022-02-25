@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.DTO;
 using Miritush.Services.Abstract;
+using Miritush.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,17 +22,20 @@ namespace Miritush.Services
         private readonly booksDbContext dbContext;
         private readonly IMapper mapper;
         private readonly ITimeSlotService timeSlotService;
+        private readonly IHttpContextAccessor opContext;
         private readonly IHttpClientFactory clientFactory;
 
         public CalendarService(
             booksDbContext dbContext,
             IMapper mapper,
             ITimeSlotService timeSlotService,
+            IHttpContextAccessor opContext,
             IHttpClientFactory _clientFactory)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
             this.timeSlotService = timeSlotService;
+            this.opContext = opContext;
             clientFactory = _clientFactory;
         }
 
@@ -46,6 +51,16 @@ namespace Miritush.Services
         public async Task<List<CloseDay>> GetCloseDayAndHolidayAsync()
         {
             var closedays = await GetCloseDaysAsync();
+            if (!opContext.HttpContext.User.Identity.IsAuthenticated)
+                throw new Exception("not auth");
+            // var results = await (await clientFactory
+            //      .GetGlobalSmsSenderClient()
+            //      .WithUri()
+            //      .WithSender("Miritush")
+            //      .ToPhoneNumber("0504277550")
+            //      .Message("test")
+            //      .GetAsync())
+            //      .AssertResultAsync<GlobalSmsResult>();
 
             var holidays = await dbContext.Holidays
                 .Where(h => h.Date >= DateTime.UtcNow.Date)
@@ -167,11 +182,11 @@ namespace Miritush.Services
                 .ToListAsync();
             hebCalResult = JsonSerializer.Deserialize<HebCalResult>(responseJson, options: options);
             var resHolidays = hebCalResult.items
-                .Where(item => 
-                       item.category == "holiday" 
-                       && item.yomtov == true 
+                .Where(item =>
+                       item.category == "holiday"
+                       && item.yomtov == true
                        && item.date.Date >= DateTime.UtcNow.Date)
-                .Where(item => holidays.All(h=> h.Date != item.date.Date))
+                .Where(item => holidays.All(h => h.Date != item.date.Date))
                 .ToList();
 
             if (!resHolidays.Any())
