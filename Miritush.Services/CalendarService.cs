@@ -4,13 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.DTO;
 using Miritush.Services.Abstract;
-using Miritush.Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -53,14 +51,6 @@ namespace Miritush.Services
             var closedays = await GetCloseDaysAsync();
             if (!opContext.HttpContext.User.Identity.IsAuthenticated)
                 throw new Exception("not auth");
-            // var results = await (await clientFactory
-            //      .GetGlobalSmsSenderClient()
-            //      .WithUri()
-            //      .WithSender("Miritush")
-            //      .ToPhoneNumber("0504277550")
-            //      .Message("test")
-            //      .GetAsync())
-            //      .AssertResultAsync<GlobalSmsResult>();
 
             var holidays = await dbContext.Holidays
                 .Where(h => h.Date >= DateTime.UtcNow.Date)

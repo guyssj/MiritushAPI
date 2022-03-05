@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace Miritush.API
 {
@@ -54,16 +55,15 @@ namespace Miritush.API
             services.AddDbContext<booksDbContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(configuration.GetConnectionString("BooksDB"), serverVersion)
-            // // The following three options help with debugging, but should
-            // // be changed or removed for production.
-            // .LogTo(Console.WriteLine, LogLevel.Information)
-            // .EnableSensitiveDataLogging()
-            // .EnableDetailedErrors()
+             // // The following three options help with debugging, but should
+             // // be changed or removed for production.
+             .LogTo(Console.WriteLine, LogLevel.Information)
+             .EnableSensitiveDataLogging()
+            .EnableDetailedErrors()
             );
             services.AddHttpContextAccessor();
             services.AddHttpClient("GlobalSms", c =>
             {
-
                 var GlobalSmsUrl = configuration.GetValue<string>("SmsProvider:BaseUrl");
                 var ApiKey = configuration.GetValue<string>("SmsProvider:ApiKey");
                 var queryParams = new Dictionary<string, string>();
@@ -195,22 +195,21 @@ namespace Miritush.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1");
-                    c.EnableValidator();
-                    c.EnableDeepLinking();
-                    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-                    c.DisplayRequestDuration();
-                    c.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Example);
-                    c.EnableFilter();
-                    c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
-                });
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Miritush.API v1");
+                c.EnableValidator();
+                c.EnableDeepLinking();
+                c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+                c.DisplayRequestDuration();
+                c.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Example);
+                c.EnableFilter();
+                c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+            });
+
             app.UseApiVersioning();
             app.UseHttpsRedirection();
 
@@ -237,6 +236,7 @@ namespace Miritush.API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<ISettingsService, SettingsService>();
         }
         private void AddAuthServices(IServiceCollection services)
         {

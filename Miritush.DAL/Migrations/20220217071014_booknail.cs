@@ -12,7 +12,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "closedays",
+                name: "CloseDays",
                 columns: table => new
                 {
                     CloseDaysID = table.Column<int>(type: "int(11)", nullable: false)
@@ -28,7 +28,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "customers",
+                name: "Customers",
                 columns: table => new
                 {
                     CustomerID = table.Column<int>(type: "int(11)", nullable: false)
@@ -53,7 +53,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "holidays",
+                name: "Holidays",
                 columns: table => new
                 {
                     HolidayID = table.Column<int>(type: "int(11)", nullable: false)
@@ -69,7 +69,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "lockhours",
+                name: "LockHours",
                 columns: table => new
                 {
                     idLockHours = table.Column<int>(type: "int(11)", nullable: false)
@@ -87,7 +87,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "services",
+                name: "Services",
                 columns: table => new
                 {
                     ServiceID = table.Column<int>(type: "int(11)", nullable: false)
@@ -102,7 +102,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "settings",
+                name: "Settings",
                 columns: table => new
                 {
                     SettingName = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
@@ -117,7 +117,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "Users",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int(11)", nullable: false)
@@ -136,7 +136,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "workhours",
+                name: "WorkHours",
                 columns: table => new
                 {
                     DayOfWeek = table.Column<int>(type: "int(11)", nullable: false)
@@ -151,7 +151,7 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "servicetype",
+                name: "ServiceType",
                 columns: table => new
                 {
                     ServiceTypeID = table.Column<int>(type: "int(11)", nullable: false)

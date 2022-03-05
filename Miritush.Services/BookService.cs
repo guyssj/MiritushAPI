@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
+using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
+using Miritush.Services.Helpers;
 
 namespace Miritush.Services
 {
@@ -14,15 +17,21 @@ namespace Miritush.Services
         private readonly booksDbContext dbContext;
         private readonly IUserContextService userContext;
         private readonly IMapper mapper;
+        private readonly ISettingsService settingsService;
+        private readonly IHttpClientFactory clientFactory;
 
         public BookService(
             booksDbContext dbContext,
             IUserContextService userContext,
-            IMapper mapper)
+            IMapper mapper,
+            ISettingsService settingsService,
+            IHttpClientFactory clientFactory)
         {
             this.dbContext = dbContext;
             this.userContext = userContext;
             this.mapper = mapper;
+            this.settingsService = settingsService;
+            this.clientFactory = clientFactory;
         }
 
         public async Task<DTO.Book> GetBooksAsync()
@@ -61,11 +70,11 @@ namespace Miritush.Services
 
         public async Task SetBookAsync(
             DateTime startDate,
+            int customerId,
             int startAt,
-            int serviceTypeId,
-            int duration)
+            int serviceTypeId)
         {
-            if (userContext.Identity.UserId == 0)
+            if (customerId == 0)
                 throw new Exception(); //[GG] Change to exption handler
 
             if (await dbContext.Books.AnyAsync(book =>
@@ -73,31 +82,101 @@ namespace Miritush.Services
                   && book.StartAt == startAt))
                 throw new Exception(); //[GG] Change to exption handler
 
-            var serviceId = await dbContext.Servicetypes
-                .Where(se => se.ServiceTypeId == serviceTypeId)
-                .Select(srv => srv.ServiceId)
+            var serviceTypeQuery = dbContext.Servicetypes
+                .Where(se => se.ServiceTypeId == serviceTypeId);
+
+            var serviceId = await serviceTypeQuery
+                .Select(st => st.ServiceId)
                 .FirstOrDefaultAsync();
 
-            var book = new Book()
+            if (serviceId <= 0)
+                throw new ArgumentNullException("your servicetypeId not exist"); //Exeption Manager
+
+            var duration = await serviceTypeQuery
+                .Select(st => st.Duration)
+                .FirstOrDefaultAsync();
+
+            var book = new DAL.Model.Book()
             {
-                CustomerId = userContext.Identity.UserId,
+                CustomerId = customerId,
                 StartDate = startDate,
                 StartAt = startAt,
                 ServiceId = serviceId,
                 ServiceTypeId = serviceTypeId,
-                Durtion = duration
+                Durtion = duration.GetValueOrDefault()
             };
             dbContext.Books.Add(book);
             await dbContext.SaveChangesAsync();
 
+            if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
+                await SendBookConfirm(book.BookId);
 
-            //send sms or not
+
             //push notfication to app
         }
 
+        public async Task UpdateBookAsync(
+            int bookId,
+            DateTime startDate,
+            int startAt,
+            int customerId,
+            string notes)
+        {
+            var book = await dbContext.Books.FindAsync(bookId);
 
+            if (book == null)
+                throw new Exception("id not exist");
+
+            await UpdateBook(
+                book.BookId,
+                startDate,
+                startAt,
+                book.ServiceId,
+                customerId,
+                book.ServiceTypeId,
+                notes,
+                book.Durtion);
+
+        }
+
+        private async Task UpdateBook(
+            int bookId,
+            DateTime startDate,
+            int startAt,
+            int serviceId,
+            int customerId,
+            int serviceTypeId,
+            string notes,
+            int duration)
+        {
+            var book = await dbContext.Books.FindAsync(bookId);
+
+            book.StartDate = startDate;
+            book.StartAt = startAt;
+            book.ServiceId = serviceId;
+            book.CustomerId = customerId;
+            book.ServiceTypeId = serviceTypeId;
+            book.Notes = notes;
+            book.Durtion = duration;
+
+            dbContext.Books.Update(book);
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteBook(int bookId)
+        {
+            var book = await dbContext.Books.FindAsync(bookId);
+            if (book == null)
+                throw new Exception("book not exsits"); //[GG] change to exeption Handler
+
+            dbContext.Books.Remove(book);
+            await dbContext.SaveChangesAsync();
+
+        }
         public async Task<List<DTO.Book>> GetCustomerFutureBooksAsync()
         {
+
             if (userContext.Identity.UserId == 0)
                 throw new Exception(); //[GG] change to exeption handler
             //need to change display BookExtended with include
@@ -122,6 +201,38 @@ namespace Miritush.Services
                 .FirstOrDefaultAsync();
 
             return await GetBooksByCustomerIdAsync(customerId);
+        }
+
+        private async Task<bool> SendBookConfirm(int bookId)
+        {
+            var newBook = await dbContext.Books
+                .Include(cus => cus.Customer)
+                .Include(serv => serv.ServiceType)
+                .Where(b => b.BookId == bookId)
+                .FirstOrDefaultAsync();
+
+            var parameters = new Dictionary<string, string>();
+            var messageTemplate = await settingsService.GetValue(SettingsNames.SMS_TEMPLATE_APP);
+            parameters.Add("{FirstName}", newBook.Customer.FirstName);
+            parameters.Add("{LastName}", newBook.Customer.LastName);
+            parameters.Add("{Date}", newBook.StartDate.ToShortDateString());
+            parameters.Add("{Time}", newBook.StartDate.Date.AddMinutes(newBook.StartAt).ToShortTimeString());
+            parameters.Add("{ServiceType}", newBook.ServiceType.ServiceTypeName);
+            parameters.Add("\\n", System.Environment.NewLine);
+
+
+            var message = MessageHelper.ReplacePlaceHolder(messageTemplate, parameters);
+            //send sms or not
+            var results = await (await clientFactory
+                .GetGlobalSmsSenderClient()
+                .WithUri()
+                .WithSender("Miritush")
+                .ToPhoneNumber(newBook.Customer.PhoneNumber)
+                .Message(message)
+                .GetAsync())
+                .AssertResultAsync<DTO.GlobalSmsResult>();
+
+            return results.Success;
         }
 
     }

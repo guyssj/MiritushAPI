@@ -4,10 +4,7 @@ using Miritush.DAL.Model;
 using Miritush.Services.Abstract;
 using System;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Miritush.DTO;
 using Microsoft.Extensions.Configuration;
@@ -122,7 +119,7 @@ namespace Miritush.Services
                 case GrantType.authorization_code:
                     break;
                 case GrantType.password:
-                    if (await VerifyUserPasswordAsync(userName, password))
+                    if (!await VerifyUserPasswordAsync(userName, password))
                         return null;
                     return JWTHelper.CreateToken(
                         configuration["Auth:Secret"],

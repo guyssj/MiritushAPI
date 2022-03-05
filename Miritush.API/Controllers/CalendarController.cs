@@ -19,7 +19,9 @@ namespace Miritush.API.Controllers
         private readonly ICalendarService _calendarService;
         private readonly IBookService bookService;
 
-        public CalendarController(ICalendarService calendarService, IBookService bookService)
+        public CalendarController(
+            ICalendarService calendarService,
+            IBookService bookService)
         {
             _calendarService = calendarService;
             this.bookService = bookService;
@@ -38,6 +40,40 @@ namespace Miritush.API.Controllers
             await bookService.GetBooksForCalendar();
             await _calendarService.CreateCloseDay(data.Date, data.Notes);
             return StatusCode(StatusCodes.Status201Created);
+        }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPut("book/update")]
+        public async Task<IActionResult> UpdateBook(UpdateBookData data)
+        {
+            await bookService.UpdateBookAsync(
+                data.BookId,
+                data.StartDate,
+                data.StartAt,
+                data.CustomerId,
+                data.Notes);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("book/create")]
+        public async Task<IActionResult> CreateBook(CreateBookData data)
+        {
+            await bookService.SetBookAsync(
+                data.StartDate,
+                data.CustomerId,
+                data.StartAt,
+                data.ServiceTypeId);
+
+            return StatusCode(StatusCodes.Status201Created);
+        }
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpDelete("book/{id}")]
+        public async Task<IActionResult> DeleteBook([FromRoute] int id)
+        {
+            await bookService.DeleteBook(id);
+
+            return StatusCode(StatusCodes.Status200OK);
         }
 
         [Authorize(Roles = UserRoles.Admin)]

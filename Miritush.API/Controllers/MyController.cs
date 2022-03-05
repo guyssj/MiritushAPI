@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Miritush.API.Model;
 using Miritush.DTO;
 using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
@@ -54,6 +56,39 @@ namespace Miritush.API.Controllers
         {
             return await bookService
                 .GetCustomerFutureBooksAsync();
+        }
+        [Authorize(Roles = UserRoles.User)]
+        [HttpPost("Books")]
+        public async Task<IActionResult> CreateBook(CreateBookData data)
+        {
+            await bookService.SetBookAsync(
+                data.StartDate,
+                userContext.Identity.UserId,
+                data.StartAt,
+                data.ServiceTypeId);
+
+            return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [Authorize(Roles = UserRoles.User)]
+        [HttpPut("Books")]
+        public async Task<IActionResult> UpdateBook(UpdateBookData data)
+        {
+            await bookService.UpdateBookAsync(
+                data.BookId,
+                data.StartDate,
+                data.StartAt,
+                userContext.Identity.UserId,
+                data.Notes);
+
+            return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("createUser")]
+        public async Task createuser([FromQuery] string userName, [FromQuery] string password)
+        {
+            await userService.Create(userName, password);
         }
     }
 }

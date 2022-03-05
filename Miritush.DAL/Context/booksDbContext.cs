@@ -35,7 +35,7 @@ namespace Miritush.DAL.Model
             {
                 var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
 
-                // optionsBuilder.UseMySql("server=localhost;user=root;password=root;database=reptouch_bookNail;port=8889", serverVersion);
+                //optionsBuilder.UseMySql("server=localhost;user=guyssj;password=guygoldi;database=reptouch_bookNail;port=8889", serverVersion);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Miritush.DAL.Model
         {
             modelBuilder.Entity<Book>(entity =>
             {
-                entity.ToTable("books");
+                entity.ToTable("Books");
 
                 entity.HasIndex(e => e.CustomerId, "CustomerID_idx");
 
@@ -107,7 +107,7 @@ namespace Miritush.DAL.Model
             {
                 entity.HasNoKey();
 
-                entity.ToTable("bookscancel");
+                entity.ToTable("BooksCancel");
 
                 entity.HasIndex(e => e.CustomerId, "CustomerIDX");
 
@@ -170,7 +170,7 @@ namespace Miritush.DAL.Model
                 entity.HasKey(e => e.CloseDaysId)
                     .HasName("PRIMARY");
 
-                entity.ToTable("closedays");
+                entity.ToTable("CloseDays");
 
                 entity.Property(e => e.CloseDaysId)
                     .HasColumnType("int(11)")
@@ -185,7 +185,7 @@ namespace Miritush.DAL.Model
 
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.ToTable("customers");
+                entity.ToTable("Customers");
 
                 entity.Property(e => e.CustomerId)
                     .HasColumnType("int(11)")
@@ -223,7 +223,7 @@ namespace Miritush.DAL.Model
 
             modelBuilder.Entity<Holiday>(entity =>
             {
-                entity.ToTable("holidays");
+                entity.ToTable("Holidays");
 
                 entity.Property(e => e.HolidayId)
                     .HasColumnType("int(11)")
@@ -243,7 +243,7 @@ namespace Miritush.DAL.Model
                 entity.HasKey(e => e.IdLockHours)
                     .HasName("PRIMARY");
 
-                entity.ToTable("lockhours");
+                entity.ToTable("LockHours");
 
                 entity.Property(e => e.IdLockHours)
                     .HasColumnType("int(11)")
@@ -268,7 +268,7 @@ namespace Miritush.DAL.Model
 
             modelBuilder.Entity<Service>(entity =>
             {
-                entity.ToTable("services");
+                entity.ToTable("Services");
 
                 entity.Property(e => e.ServiceId)
                     .HasColumnType("int(11)")
@@ -281,7 +281,7 @@ namespace Miritush.DAL.Model
 
             modelBuilder.Entity<Servicetype>(entity =>
             {
-                entity.ToTable("servicetype");
+                entity.ToTable("ServiceType");
 
                 entity.HasIndex(e => e.ServiceId, "ServiceID_idx");
 
@@ -321,7 +321,7 @@ namespace Miritush.DAL.Model
                 entity.HasKey(e => e.SettingName)
                     .HasName("PRIMARY");
 
-                entity.ToTable("settings");
+                entity.ToTable("Settings");
 
                 entity.HasIndex(e => e.SettingName, "SettingName")
                     .IsUnique();
@@ -335,7 +335,7 @@ namespace Miritush.DAL.Model
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("users");
+                entity.ToTable("Users");
 
                 entity.Property(e => e.Id)
                     .HasColumnType("int(11)")
@@ -359,7 +359,7 @@ namespace Miritush.DAL.Model
                 entity.HasKey(e => e.DayOfWeek)
                     .HasName("PRIMARY");
 
-                entity.ToTable("workhours");
+                entity.ToTable("WorkHours");
 
                 entity.HasIndex(e => e.DayOfWeek, "DayOfWeek_UNIQUE")
                     .IsUnique();
