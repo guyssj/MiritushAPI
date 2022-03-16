@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Model;
@@ -19,17 +21,20 @@ namespace Miritush.API.Controllers
         private readonly IUserContextService userContext;
         private readonly ICustomerService customerService;
         private readonly IBookService bookService;
+        private readonly IUploadFileService uploadFileService;
 
         public MyController(
             IUserService userService,
             IUserContextService userContext,
             ICustomerService customerService,
-            IBookService bookService)
+            IBookService bookService,
+            IUploadFileService uploadFileService)
         {
             this.userService = userService;
             this.userContext = userContext;
             this.customerService = customerService;
             this.bookService = bookService;
+            this.uploadFileService = uploadFileService;
         }
 
         [HttpGet("details")]
@@ -84,6 +89,33 @@ namespace Miritush.API.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
+        [Authorize(Roles = UserRoles.User)]
+        [HttpPost("uploadfile")]
+        public async Task<IActionResult> fileupload(IFormFile file)
+        {
+
+            await uploadFileService.UploadFile(file, userContext.Identity.UserId.ToString());
+
+            return Ok();
+        }
+
+        [Authorize(Roles = UserRoles.User)]
+        [HttpGet("files/{fileName}")]
+        public async Task<object> GetFile(string fileName)
+        {
+            var res = await uploadFileService.GetFilesFolderAsync($"62/{fileName}");
+            //return new { image = $"data:{res.MimeType};base64,{Convert.ToBase64String(res.Content)}" };
+            return File(res.Content, res.MimeType);
+        }
+        [Authorize(Roles = UserRoles.User)]
+        [HttpGet("files")]
+        public async Task<string> GetFiles(string fileName)
+        {
+            var res = await uploadFileService.GetFolderFiles($"62/");
+            return "";
+            //return $"data:{res.MimeType};base64,{Convert.ToBase64String(res.Content)}";
+            //return File(res, "image/jpg");
+        }
         [AllowAnonymous]
         [HttpGet("createUser")]
         public async Task createuser([FromQuery] string userName, [FromQuery] string password)

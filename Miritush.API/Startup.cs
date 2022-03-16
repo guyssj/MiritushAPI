@@ -216,7 +216,11 @@ namespace Miritush.API
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Content-Disposition"));
 
             app.UseEndpoints(endpoints =>
             {
@@ -237,6 +241,8 @@ namespace Miritush.API
             services.AddScoped<IUserContextService, UserContextService>();
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<IUploadFileService, UploadFileService>();
+
         }
         private void AddAuthServices(IServiceCollection services)
         {
