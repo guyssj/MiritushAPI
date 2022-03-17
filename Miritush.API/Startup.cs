@@ -242,6 +242,8 @@ namespace Miritush.API
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IUploadFileService, UploadFileService>();
+            services.AddScoped<IAttachmentsService, AttachmentsService>();
+
 
         }
         private void AddAuthServices(IServiceCollection services)

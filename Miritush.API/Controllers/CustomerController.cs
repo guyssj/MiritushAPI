@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Miritush.API.Attributes;
 using Miritush.API.Model;
 using Miritush.DAL.Model;
 using Miritush.Services;
@@ -45,6 +47,8 @@ namespace Miritush.API.Controllers
 
         // POST api/<CustomerController>
         [HttpPost]
+        [ValidateModel]
+        [AllowAnonymous]
         public Task<DTO.Customer> CreateCutomer([FromBody] CustomerData customerData)
         {
             return _customerService.CreateCustomer(

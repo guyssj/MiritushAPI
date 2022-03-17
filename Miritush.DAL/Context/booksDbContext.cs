@@ -8,7 +8,7 @@ namespace Miritush.DAL.Model
 {
     public partial class booksDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public booksDbContext()
+        public booksDbContext() : base()
         {
         }
 
@@ -28,6 +28,7 @@ namespace Miritush.DAL.Model
         public virtual DbSet<Setting> Settings { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Workhour> Workhours { get; set; }
+        public virtual DbSet<Attachment> Attachments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,7 +36,7 @@ namespace Miritush.DAL.Model
             {
                 var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
 
-                //optionsBuilder.UseMySql("server=localhost;user=guyssj;password=guygoldi;database=reptouch_bookNail;port=8889", serverVersion);
+                optionsBuilder.UseMySql("server=localhost;user=guyssj;password=guygoldi;database=reptouch_bookNail;port=3306", serverVersion);
             }
         }
 
@@ -45,11 +46,11 @@ namespace Miritush.DAL.Model
             {
                 entity.ToTable("Books");
 
-                entity.HasIndex(e => e.CustomerId, "CustomerID_idx");
+                entity.HasIndex(e => e.CustomerId, "CustomerID_Books_CustomerID");
 
-                entity.HasIndex(e => e.ServiceId, "ServiceID_idx");
+                entity.HasIndex(e => e.ServiceId, "ServiceID_Books_ServiceID");
 
-                entity.HasIndex(e => e.ServiceTypeId, "ServiceTypeID_idx");
+                entity.HasIndex(e => e.ServiceTypeId, "ServiceTypeID_Books_ServiceTypeID");
 
                 entity.HasIndex(e => new { e.BookId, e.StartDate }, "StartDate")
                     .IsUnique();
@@ -61,46 +62,46 @@ namespace Miritush.DAL.Model
                 entity.Property(e => e.CustomerId)
                     .HasColumnType("int(11)")
                     .HasColumnName("CustomerID")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Durtion)
                     .HasColumnType("int(11)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.ServiceId)
                     .HasColumnType("int(11)")
                     .HasColumnName("ServiceID")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.ServiceTypeId)
                     .HasColumnType("int(11)")
                     .HasColumnName("ServiceTypeID")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.StartAt).HasColumnType("int(11)");
 
                 entity.Property(e => e.StartDate)
                     .HasColumnType("date")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Books)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("CustomerID");
+                    .HasConstraintName("CustomerID_Books_CustomerID");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.Books)
                     .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("ServiceID");
+                    .HasConstraintName("ServiceID_Books_ServiceID");
 
                 entity.HasOne(d => d.ServiceType)
                     .WithMany(p => p.Books)
                     .HasForeignKey(d => d.ServiceTypeId)
-                    .HasConstraintName("ServiceTypeID");
+                    .HasConstraintName("ServiceTypeID_Books_ServiceTypeID");
             });
 
             modelBuilder.Entity<Bookscancel>(entity =>
@@ -109,11 +110,11 @@ namespace Miritush.DAL.Model
 
                 entity.ToTable("BooksCancel");
 
-                entity.HasIndex(e => e.CustomerId, "CustomerIDX");
+                entity.HasIndex(e => e.CustomerId, "CustomerID_BookCancel_CustomerID");
 
-                entity.HasIndex(e => e.ServiceId, "ServiceIDX");
+                entity.HasIndex(e => e.ServiceId, "ServiceID_BookCancel_ServiceID");
 
-                entity.HasIndex(e => e.ServiceTypeId, "ServiceTypeIDX");
+                entity.HasIndex(e => e.ServiceTypeId, "ServiceTypeID_BookCacnel_ServiceTypeID");
 
                 entity.Property(e => e.BookId)
                     .HasColumnType("int(11)")
@@ -127,17 +128,17 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.ServiceId)
                     .HasColumnType("int(11)")
                     .HasColumnName("ServiceID")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.ServiceTypeId)
                     .HasColumnType("int(11)")
                     .HasColumnName("ServiceTypeID")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.StartAt).HasColumnType("int(11)");
 
@@ -146,23 +147,23 @@ namespace Miritush.DAL.Model
                 entity.Property(e => e.WhyCancel)
                     .HasMaxLength(500)
                     .HasColumnName("whyCancel")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.HasOne(d => d.Customer)
                     .WithMany()
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("CustomerIDX");
+                    .HasConstraintName("CustomerID_BookCancel_CustomerID");
 
                 entity.HasOne(d => d.Service)
                     .WithMany()
                     .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("ServiceIDX");
+                    .HasConstraintName("ServiceID_BookCancel_ServiceID");
 
                 entity.HasOne(d => d.ServiceType)
                     .WithMany()
                     .HasForeignKey(d => d.ServiceTypeId)
-                    .HasConstraintName("ServiceTypeIDX");
+                    .HasConstraintName("ServiceTypeID_BookCacnel_ServiceTypeID");
             });
 
             modelBuilder.Entity<Closeday>(entity =>
@@ -180,7 +181,7 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -197,28 +198,28 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Color)
                     .HasMaxLength(45)
-                    .HasDefaultValueSql("'''#c96d9f'''");
+                    .HasDefaultValueSql("#c96d9f");
 
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(250)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.LastName)
                     .HasMaxLength(250)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Otp)
                     .HasColumnType("int(11)")
                     .HasColumnName("OTP")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.PhoneNumber)
                     .HasMaxLength(250)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
             });
 
             modelBuilder.Entity<Holiday>(entity =>
@@ -235,7 +236,7 @@ namespace Miritush.DAL.Model
                     .HasMaxLength(500)
                     .HasCharSet("utf8")
                     .UseCollation("utf8_general_ci")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
             });
 
             modelBuilder.Entity<Lockhour>(entity =>
@@ -251,19 +252,19 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.EndAt)
                     .HasColumnType("int(11)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Notes)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.StartAt)
                     .HasColumnType("int(11)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.StartDate)
                     .HasColumnType("date")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
             });
 
             modelBuilder.Entity<Service>(entity =>
@@ -276,7 +277,7 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.ServiceName)
                     .HasMaxLength(45)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
             });
 
             modelBuilder.Entity<Servicetype>(entity =>
@@ -291,15 +292,15 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Description)
                     .HasMaxLength(500)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Duration)
                     .HasColumnType("int(11)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(18,2)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.ServiceId)
                     .HasColumnType("int(11)")
@@ -307,7 +308,7 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.ServiceTypeName)
                     .HasMaxLength(255)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.Servicetypes)
@@ -330,7 +331,15 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.SettingValue)
                     .HasColumnType("varchar(5000)")
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
+
+                entity.HasData(
+                    new Setting { SettingName = "SEND_SMS_APP", SettingValue = "1" },
+                    new Setting { SettingName = "MIN_AFTER_WORK", SettingValue = "60" },
+                    new Setting { SettingName = "SMS_TEMPLATE_APP", SettingValue = "שלום {FirstName} {LastName},\\nנקבעה לך פגישה לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה\n" },
+                    new Setting { SettingName = "SMS_TEMPLATE_REMINDER", SettingValue = "שלום {FirstName} {LastName},\\nזאת תזכורת לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nלא לשכוח מסכה\\n\\nלאישור הגעה יש להודיע בהודעת ווצאפ\nלמספר 0525533979" },
+                    new Setting { SettingName = "TIME_INTERVAL_CALENDAR", SettingValue = "60" },
+                    new Setting { SettingName = "SMS_TEMPLATE_UPAPP", SettingValue = "שלום {FirstName} {LastName},\\nהפגישה לטיפול {ServiceType} אצל מיריתוש\\n עודכנה לתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה" });
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -347,11 +356,13 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.RegId)
                     .HasMaxLength(1000)
-                    .HasDefaultValueSql("'NULL'");
+                    .HasDefaultValueSql(null);
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasData(new User { Id = 1, UserName = "admin", Password = "Hash" });
             });
 
             modelBuilder.Entity<Workhour>(entity =>
@@ -369,6 +380,38 @@ namespace Miritush.DAL.Model
                 entity.Property(e => e.CloseTime).HasColumnType("int(11)");
 
                 entity.Property(e => e.OpenTime).HasColumnType("int(11)");
+            });
+
+            modelBuilder.Entity<Attachment>(entity =>
+            {
+                entity.ToTable("Attachments");
+
+                entity.HasIndex(e => e.CustomerId, "CustomerID_Attachments");
+
+                entity.HasIndex(e => new { e.AttachmentId }, "AttachmentID")
+                    .IsUnique();
+
+                entity.Property(e => e.AttachmentId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("AttachmentID");
+
+                entity.Property(e => e.CustomerId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CustomerID")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.AttachmentName)
+                    .HasColumnType("varchar(400)")
+                    .HasColumnName("AttachmentName");
+
+                entity.Property(e => e.MimeType)
+                    .HasColumnType("varchar(500)")
+                    .HasColumnName("MimeType");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Attachments)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("CustomerID_Attachments");
             });
 
             OnModelCreatingPartial(modelBuilder);

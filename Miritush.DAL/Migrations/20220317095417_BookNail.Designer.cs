@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Miritush.DAL.Model;
 
 namespace Miritush.DAL.Migrations
 {
     [DbContext(typeof(booksDbContext))]
-    partial class booksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220317095417_BookNail")]
+    partial class BookNail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +35,7 @@ namespace Miritush.DAL.Migrations
                         .HasColumnName("CustomerID");
 
                     b.Property<string>("MimeType")
-                        .HasColumnType("varchar(500)")
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("MimeType");
 
                     b.HasKey("AttachmentId");
@@ -311,38 +313,6 @@ namespace Miritush.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("Settings");
-
-                    b.HasData(
-                        new
-                        {
-                            SettingName = "SEND_SMS_APP",
-                            SettingValue = "1"
-                        },
-                        new
-                        {
-                            SettingName = "MIN_AFTER_WORK",
-                            SettingValue = "60"
-                        },
-                        new
-                        {
-                            SettingName = "SMS_TEMPLATE_APP",
-                            SettingValue = "שלום {FirstName} {LastName},\\nנקבעה לך פגישה לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה\n"
-                        },
-                        new
-                        {
-                            SettingName = "SMS_TEMPLATE_REMINDER",
-                            SettingValue = "שלום {FirstName} {LastName},\\nזאת תזכורת לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nלא לשכוח מסכה\\n\\nלאישור הגעה יש להודיע בהודעת ווצאפ\nלמספר 0525533979"
-                        },
-                        new
-                        {
-                            SettingName = "TIME_INTERVAL_CALENDAR",
-                            SettingValue = "60"
-                        },
-                        new
-                        {
-                            SettingName = "SMS_TEMPLATE_UPAPP",
-                            SettingValue = "שלום {FirstName} {LastName},\\nהפגישה לטיפול {ServiceType} אצל מיריתוש\\n עודכנה לתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה"
-                        });
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.User", b =>
@@ -369,14 +339,6 @@ namespace Miritush.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Password = "Hash",
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Workhour", b =>

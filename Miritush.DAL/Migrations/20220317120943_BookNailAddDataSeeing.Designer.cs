@@ -9,8 +9,8 @@ using Miritush.DAL.Model;
 namespace Miritush.DAL.Migrations
 {
     [DbContext(typeof(booksDbContext))]
-    [Migration("20220217071014_booknail")]
-    partial class booknail
+    [Migration("20220317120943_BookNailAddDataSeeing")]
+    partial class BookNailAddDataSeeing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,35 @@ namespace Miritush.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
+            modelBuilder.Entity("Miritush.DAL.Model.Attachment", b =>
+                {
+                    b.Property<int>("AttachmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)")
+                        .HasColumnName("AttachmentID");
+
+                    b.Property<string>("AttachmentName")
+                        .HasColumnType("varchar(400)")
+                        .HasColumnName("AttachmentName");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int(11)")
+                        .HasColumnName("CustomerID");
+
+                    b.Property<string>("MimeType")
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("MimeType");
+
+                    b.HasKey("AttachmentId");
+
+                    b.HasIndex(new[] { "AttachmentId" }, "AttachmentID")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "CustomerId" }, "CustomerID_Attachments");
+
+                    b.ToTable("Attachments");
+                });
+
             modelBuilder.Entity("Miritush.DAL.Model.Book", b =>
                 {
                     b.Property<int>("BookId")
@@ -26,55 +55,43 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("int(11)")
                         .HasColumnName("BookID");
 
-                    b.Property<int?>("CustomerId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int(11)")
-                        .HasColumnName("CustomerID")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("CustomerID");
 
-                    b.Property<int?>("Durtion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)")
-                        .HasDefaultValueSql("'NULL'");
+                    b.Property<int>("Durtion")
+                        .HasColumnType("int(11)");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
-                    b.Property<int?>("ServiceId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ServiceId")
                         .HasColumnType("int(11)")
-                        .HasColumnName("ServiceID")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("ServiceID");
 
-                    b.Property<int?>("ServiceTypeId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ServiceTypeId")
                         .HasColumnType("int(11)")
-                        .HasColumnName("ServiceTypeID")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("ServiceTypeID");
 
                     b.Property<int>("StartAt")
                         .HasColumnType("int(11)");
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("date");
 
                     b.HasKey("BookId");
 
-                    b.HasIndex(new[] { "CustomerId" }, "CustomerID_idx");
+                    b.HasIndex(new[] { "CustomerId" }, "CustomerID_Books_CustomerID");
 
-                    b.HasIndex(new[] { "ServiceId" }, "ServiceID_idx");
+                    b.HasIndex(new[] { "ServiceId" }, "ServiceID_Books_ServiceID");
 
-                    b.HasIndex(new[] { "ServiceTypeId" }, "ServiceTypeID_idx");
+                    b.HasIndex(new[] { "ServiceTypeId" }, "ServiceTypeID_Books_ServiceTypeID");
 
                     b.HasIndex(new[] { "BookId", "StartDate" }, "StartDate")
                         .IsUnique();
 
-                    b.ToTable("books");
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Bookscancel", b =>
@@ -91,22 +108,16 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("int(11)");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int?>("ServiceId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int(11)")
-                        .HasColumnName("ServiceID")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("ServiceID");
 
                     b.Property<int?>("ServiceTypeId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int(11)")
-                        .HasColumnName("ServiceTypeID")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("ServiceTypeID");
 
                     b.Property<int>("StartAt")
                         .HasColumnType("int(11)");
@@ -115,19 +126,17 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("WhyCancel")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)")
-                        .HasColumnName("whyCancel")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("whyCancel");
 
-                    b.HasIndex(new[] { "CustomerId" }, "CustomerIDX");
+                    b.HasIndex(new[] { "CustomerId" }, "CustomerID_BookCancel_CustomerID");
 
-                    b.HasIndex(new[] { "ServiceId" }, "ServiceIDX");
+                    b.HasIndex(new[] { "ServiceId" }, "ServiceID_BookCancel_ServiceID");
 
-                    b.HasIndex(new[] { "ServiceTypeId" }, "ServiceTypeIDX");
+                    b.HasIndex(new[] { "ServiceTypeId" }, "ServiceTypeID_BookCacnel_ServiceTypeID");
 
-                    b.ToTable("bookscancel");
+                    b.ToTable("BooksCancel");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Closeday", b =>
@@ -141,15 +150,13 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
                     b.HasKey("CloseDaysId")
                         .HasName("PRIMARY");
 
-                    b.ToTable("closedays");
+                    b.ToTable("CloseDays");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Customer", b =>
@@ -171,38 +178,28 @@ namespace Miritush.DAL.Migrations
                         .HasDefaultValueSql("'''#c96d9f'''");
 
                     b.Property<string>("FirstName")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("varchar(250)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("LastName")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("varchar(250)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int?>("Otp")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int(11)")
-                        .HasColumnName("OTP")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnName("OTP");
 
                     b.Property<string>("PhoneNumber")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(250)
-                        .HasColumnType("varchar(250)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(250)");
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("customers");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Holiday", b =>
@@ -216,16 +213,14 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'")
                         .UseCollation("utf8_general_ci")
                         .HasCharSet("utf8");
 
                     b.HasKey("HolidayId");
 
-                    b.ToTable("holidays");
+                    b.ToTable("Holidays");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Lockhour", b =>
@@ -236,30 +231,22 @@ namespace Miritush.DAL.Migrations
                         .HasColumnName("idLockHours");
 
                     b.Property<int>("EndAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("int(11)");
 
                     b.Property<string>("Notes")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("StartAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("int(11)");
 
                     b.Property<DateTime>("StartDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("date");
 
                     b.HasKey("IdLockHours")
                         .HasName("PRIMARY");
 
-                    b.ToTable("lockhours");
+                    b.ToTable("LockHours");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Service", b =>
@@ -270,14 +257,12 @@ namespace Miritush.DAL.Migrations
                         .HasColumnName("ServiceID");
 
                     b.Property<string>("ServiceName")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(45)
-                        .HasColumnType("varchar(45)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(45)");
 
                     b.HasKey("ServiceId");
 
-                    b.ToTable("services");
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Servicetype", b =>
@@ -288,37 +273,28 @@ namespace Miritush.DAL.Migrations
                         .HasColumnName("ServiceTypeID");
 
                     b.Property<string>("Description")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int?>("Duration")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("int(11)");
 
                     b.Property<decimal?>("Price")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int(11)")
                         .HasColumnName("ServiceID");
 
                     b.Property<string>("ServiceTypeName")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("ServiceTypeId");
 
-                    b.HasIndex(new[] { "ServiceId" }, "ServiceID_idx")
-                        .HasDatabaseName("ServiceID_idx1");
+                    b.HasIndex(new[] { "ServiceId" }, "ServiceID_idx");
 
-                    b.ToTable("servicetype");
+                    b.ToTable("ServiceType");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Setting", b =>
@@ -328,9 +304,7 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<string>("SettingValue")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(5000)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(5000)");
 
                     b.HasKey("SettingName")
                         .HasName("PRIMARY");
@@ -338,7 +312,39 @@ namespace Miritush.DAL.Migrations
                     b.HasIndex(new[] { "SettingName" }, "SettingName")
                         .IsUnique();
 
-                    b.ToTable("settings");
+                    b.ToTable("Settings");
+
+                    b.HasData(
+                        new
+                        {
+                            SettingName = "SEND_SMS_APP",
+                            SettingValue = "1"
+                        },
+                        new
+                        {
+                            SettingName = "MIN_AFTER_WORK",
+                            SettingValue = "60"
+                        },
+                        new
+                        {
+                            SettingName = "SMS_TEMPLATE_APP",
+                            SettingValue = "שלום {FirstName} {LastName},\\nנקבעה לך פגישה לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה\n"
+                        },
+                        new
+                        {
+                            SettingName = "SMS_TEMPLATE_REMINDER",
+                            SettingValue = "שלום {FirstName} {LastName},\\nזאת תזכורת לטיפול {ServiceType} אצל מיריתוש\\nבתאריך {Date} בשעה {Time}\\nלא לשכוח מסכה\\n\\nלאישור הגעה יש להודיע בהודעת ווצאפ\nלמספר 0525533979"
+                        },
+                        new
+                        {
+                            SettingName = "TIME_INTERVAL_CALENDAR",
+                            SettingValue = "60"
+                        },
+                        new
+                        {
+                            SettingName = "SMS_TEMPLATE_UPAPP",
+                            SettingValue = "שלום {FirstName} {LastName},\\nהפגישה לטיפול {ServiceType} אצל מיריתוש\\n עודכנה לתאריך {Date} בשעה {Time}\\nיש להגיע עם מסכה"
+                        });
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.User", b =>
@@ -354,10 +360,8 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<string>("RegId")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)")
-                        .HasDefaultValueSql("'NULL'");
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -366,7 +370,15 @@ namespace Miritush.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Password = "Hash",
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Workhour", b =>
@@ -387,7 +399,19 @@ namespace Miritush.DAL.Migrations
                     b.HasIndex(new[] { "DayOfWeek" }, "DayOfWeek_UNIQUE")
                         .IsUnique();
 
-                    b.ToTable("workhours");
+                    b.ToTable("WorkHours");
+                });
+
+            modelBuilder.Entity("Miritush.DAL.Model.Attachment", b =>
+                {
+                    b.HasOne("Miritush.DAL.Model.Customer", "Customer")
+                        .WithMany("Attachments")
+                        .HasForeignKey("CustomerId")
+                        .HasConstraintName("CustomerID_Attachments")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Miritush.DAL.Model.Book", b =>
@@ -395,17 +419,23 @@ namespace Miritush.DAL.Migrations
                     b.HasOne("Miritush.DAL.Model.Customer", "Customer")
                         .WithMany("Books")
                         .HasForeignKey("CustomerId")
-                        .HasConstraintName("CustomerID");
+                        .HasConstraintName("CustomerID_Books_CustomerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Miritush.DAL.Model.Service", "Service")
                         .WithMany("Books")
                         .HasForeignKey("ServiceId")
-                        .HasConstraintName("ServiceID");
+                        .HasConstraintName("ServiceID_Books_ServiceID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Miritush.DAL.Model.Servicetype", "ServiceType")
                         .WithMany("Books")
                         .HasForeignKey("ServiceTypeId")
-                        .HasConstraintName("ServiceTypeID");
+                        .HasConstraintName("ServiceTypeID_Books_ServiceTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 
@@ -419,18 +449,18 @@ namespace Miritush.DAL.Migrations
                     b.HasOne("Miritush.DAL.Model.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .HasConstraintName("CustomerIDX")
+                        .HasConstraintName("CustomerID_BookCancel_CustomerID")
                         .IsRequired();
 
                     b.HasOne("Miritush.DAL.Model.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
-                        .HasConstraintName("ServiceIDX");
+                        .HasConstraintName("ServiceID_BookCancel_ServiceID");
 
                     b.HasOne("Miritush.DAL.Model.Servicetype", "ServiceType")
                         .WithMany()
                         .HasForeignKey("ServiceTypeId")
-                        .HasConstraintName("ServiceTypeIDX");
+                        .HasConstraintName("ServiceTypeID_BookCacnel_ServiceTypeID");
 
                     b.Navigation("Customer");
 
@@ -452,6 +482,8 @@ namespace Miritush.DAL.Migrations
 
             modelBuilder.Entity("Miritush.DAL.Model.Customer", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("Books");
                 });
 

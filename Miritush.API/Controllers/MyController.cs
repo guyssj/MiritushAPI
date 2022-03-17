@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -19,22 +20,26 @@ namespace Miritush.API.Controllers
     {
         private readonly IUserService userService;
         private readonly IUserContextService userContext;
-        private readonly ICustomerService customerService;
         private readonly IBookService bookService;
+        private readonly IMapper mapper;
         private readonly IUploadFileService uploadFileService;
+        private readonly IAttachmentsService attachmentsService;
 
         public MyController(
             IUserService userService,
             IUserContextService userContext,
             ICustomerService customerService,
             IBookService bookService,
-            IUploadFileService uploadFileService)
+            IMapper mapper,
+            IUploadFileService uploadFileService,
+            IAttachmentsService attachmentsService )
         {
             this.userService = userService;
             this.userContext = userContext;
-            this.customerService = customerService;
             this.bookService = bookService;
+            this.mapper = mapper;
             this.uploadFileService = uploadFileService;
+            this.attachmentsService = attachmentsService;
         }
 
         [HttpGet("details")]
@@ -93,8 +98,13 @@ namespace Miritush.API.Controllers
         [HttpPost("uploadfile")]
         public async Task<IActionResult> fileupload(IFormFile file)
         {
+            var userId = userContext.Identity.UserId;
 
-            await uploadFileService.UploadFile(file, userContext.Identity.UserId.ToString());
+            //add file to aws s3 blob
+            await uploadFileService.UploadFile(file, userId.ToString());
+
+            //add deatils file to attachments table
+            await attachmentsService.AddAttachmentAsync(file.FileName, file.ContentType, userId);
 
             return Ok();
         }
@@ -109,10 +119,10 @@ namespace Miritush.API.Controllers
         }
         [Authorize(Roles = UserRoles.User)]
         [HttpGet("files")]
-        public async Task<string> GetFiles(string fileName)
+        public async Task<List<Attachment>> GetFiles()
         {
-            var res = await uploadFileService.GetFolderFiles($"62/");
-            return "";
+            var res = await attachmentsService.GetAttachmentsByCustomerIdAsync(userContext.Identity.UserId);
+            return mapper.Map<List<DTO.Attachment>>(res);
             //return $"data:{res.MimeType};base64,{Convert.ToBase64String(res.Content)}";
             //return File(res, "image/jpg");
         }

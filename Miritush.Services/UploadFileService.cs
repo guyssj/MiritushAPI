@@ -75,14 +75,15 @@ namespace Miritush.Services
                 var listobj = await client.ListObjectsV2Async(objReq);
                 var fileTransferUtility = new TransferUtility(client);
                 var filesList = new List<DTO.BlobFile>();
-                listobj.S3Objects.ForEach(async obj =>
+                listobj.S3Objects.ForEach(obj =>
                 {
-                    using (var objResp = await fileTransferUtility.OpenStreamAsync(obj.BucketName, obj.Key))
-                    {
-                        var fileByte = await GetFileStreamToBytes(objResp);
-                        filesList.Add(new DTO.BlobFile { FileName = obj.Key, MimeType = obj.StorageClass, Content = fileByte });
-                    }
+                    filesList.Add(new DTO.BlobFile { FileName = obj.Key });
                 });
+
+                foreach (var item in listobj.S3Objects)
+                {
+                   filesList.Add(await GetFilesFolderAsync(item.Key));
+                }
                 return filesList;
             }
         }

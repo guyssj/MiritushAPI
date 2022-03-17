@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Miritush.API.Model
 {
     public class CustomerData
     {
+        [JsonIgnore]
         public int Id { get; set; }
 
         [Required]

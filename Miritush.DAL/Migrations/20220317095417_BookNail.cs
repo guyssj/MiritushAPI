@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Miritush.DAL.Migrations
 {
-    public partial class booknail : Migration
+    public partial class BookNail : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,7 +18,7 @@ namespace Miritush.DAL.Migrations
                     CloseDaysID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(type: "date", nullable: false),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -33,22 +33,22 @@ namespace Miritush.DAL.Migrations
                 {
                     CustomerID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    FirstName = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true, defaultValueSql: "'NULL'")
+                    FirstName = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LastName = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true, defaultValueSql: "'NULL'")
+                    LastName = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PhoneNumber = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true, defaultValueSql: "'NULL'")
+                    PhoneNumber = table.Column<string>(type: "varchar(250)", maxLength: 250, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Color = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true, defaultValueSql: "'''#c96d9f'''")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    OTP = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
+                    OTP = table.Column<int>(type: "int(11)", nullable: true),
                     Active = table.Column<sbyte>(type: "tinyint(4)", nullable: true, defaultValueSql: "'1'")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_customers", x => x.CustomerID);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -59,12 +59,12 @@ namespace Miritush.DAL.Migrations
                     HolidayID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(type: "date", nullable: false),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'", collation: "utf8_general_ci")
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, collation: "utf8_general_ci")
                         .Annotation("MySql:CharSet", "utf8")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_holidays", x => x.HolidayID);
+                    table.PrimaryKey("PK_Holidays", x => x.HolidayID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -74,10 +74,10 @@ namespace Miritush.DAL.Migrations
                 {
                     idLockHours = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StartDate = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "'NULL'"),
-                    StartAt = table.Column<int>(type: "int(11)", nullable: false, defaultValueSql: "'NULL'"),
-                    EndAt = table.Column<int>(type: "int(11)", nullable: false, defaultValueSql: "'NULL'"),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    StartDate = table.Column<DateTime>(type: "date", nullable: false),
+                    StartAt = table.Column<int>(type: "int(11)", nullable: false),
+                    EndAt = table.Column<int>(type: "int(11)", nullable: false),
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -92,12 +92,12 @@ namespace Miritush.DAL.Migrations
                 {
                     ServiceID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ServiceName = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true, defaultValueSql: "'NULL'")
+                    ServiceName = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_services", x => x.ServiceID);
+                    table.PrimaryKey("PK_Services", x => x.ServiceID);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -107,7 +107,7 @@ namespace Miritush.DAL.Migrations
                 {
                     SettingName = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SettingValue = table.Column<string>(type: "varchar(5000)", nullable: true, defaultValueSql: "'NULL'")
+                    SettingValue = table.Column<string>(type: "varchar(5000)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -126,12 +126,12 @@ namespace Miritush.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    RegId = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true, defaultValueSql: "'NULL'")
+                    RegId = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.id);
+                    table.PrimaryKey("PK_Users", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -151,159 +151,194 @@ namespace Miritush.DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Attachments",
+                columns: table => new
+                {
+                    AttachmentID = table.Column<int>(type: "int(11)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    AttachmentName = table.Column<string>(type: "varchar(400)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MimeType = table.Column<string>(type: "varchar(100)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CustomerID = table.Column<int>(type: "int(11)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attachments", x => x.AttachmentID);
+                    table.ForeignKey(
+                        name: "CustomerID_Attachments",
+                        column: x => x.CustomerID,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerID",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "ServiceType",
                 columns: table => new
                 {
                     ServiceTypeID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ServiceTypeName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, defaultValueSql: "'NULL'")
+                    ServiceTypeName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ServiceID = table.Column<int>(type: "int(11)", nullable: false),
-                    Duration = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true, defaultValueSql: "'NULL'"),
-                    Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    Duration = table.Column<int>(type: "int(11)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_servicetype", x => x.ServiceTypeID);
+                    table.PrimaryKey("PK_ServiceType", x => x.ServiceTypeID);
                     table.ForeignKey(
                         name: "ServiceIDFK",
                         column: x => x.ServiceID,
-                        principalTable: "services",
+                        principalTable: "Services",
                         principalColumn: "ServiceID",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "books",
+                name: "Books",
                 columns: table => new
                 {
                     BookID = table.Column<int>(type: "int(11)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StartDate = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "'NULL'"),
+                    StartDate = table.Column<DateTime>(type: "date", nullable: false),
                     StartAt = table.Column<int>(type: "int(11)", nullable: false),
-                    CustomerID = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    ServiceID = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    Durtion = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    ServiceTypeID = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    CustomerID = table.Column<int>(type: "int(11)", nullable: false),
+                    ServiceID = table.Column<int>(type: "int(11)", nullable: false),
+                    Durtion = table.Column<int>(type: "int(11)", nullable: false),
+                    ServiceTypeID = table.Column<int>(type: "int(11)", nullable: false),
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_books", x => x.BookID);
+                    table.PrimaryKey("PK_Books", x => x.BookID);
                     table.ForeignKey(
-                        name: "CustomerID",
+                        name: "CustomerID_Books_CustomerID",
                         column: x => x.CustomerID,
-                        principalTable: "customers",
+                        principalTable: "Customers",
                         principalColumn: "CustomerID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "ServiceID",
+                        name: "ServiceID_Books_ServiceID",
                         column: x => x.ServiceID,
-                        principalTable: "services",
+                        principalTable: "Services",
                         principalColumn: "ServiceID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "ServiceTypeID",
+                        name: "ServiceTypeID_Books_ServiceTypeID",
                         column: x => x.ServiceTypeID,
-                        principalTable: "servicetype",
+                        principalTable: "ServiceType",
                         principalColumn: "ServiceTypeID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "bookscancel",
+                name: "BooksCancel",
                 columns: table => new
                 {
                     BookID = table.Column<int>(type: "int(11)", nullable: false),
                     CustomerID = table.Column<int>(type: "int(11)", nullable: false),
                     Durtion = table.Column<int>(type: "int(11)", nullable: false),
-                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    Notes = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ServiceID = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
-                    ServiceTypeID = table.Column<int>(type: "int(11)", nullable: true, defaultValueSql: "'NULL'"),
+                    ServiceID = table.Column<int>(type: "int(11)", nullable: true),
+                    ServiceTypeID = table.Column<int>(type: "int(11)", nullable: true),
                     StartAt = table.Column<int>(type: "int(11)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "date", nullable: false),
-                    whyCancel = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true, defaultValueSql: "'NULL'")
+                    whyCancel = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.ForeignKey(
-                        name: "CustomerIDX",
+                        name: "CustomerID_BookCancel_CustomerID",
                         column: x => x.CustomerID,
-                        principalTable: "customers",
+                        principalTable: "Customers",
                         principalColumn: "CustomerID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "ServiceIDX",
+                        name: "ServiceID_BookCancel_ServiceID",
                         column: x => x.ServiceID,
-                        principalTable: "services",
+                        principalTable: "Services",
                         principalColumn: "ServiceID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "ServiceTypeIDX",
+                        name: "ServiceTypeID_BookCacnel_ServiceTypeID",
                         column: x => x.ServiceTypeID,
-                        principalTable: "servicetype",
+                        principalTable: "ServiceType",
                         principalColumn: "ServiceTypeID",
                         onDelete: ReferentialAction.Restrict);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "CustomerID_idx",
-                table: "books",
+                name: "AttachmentID",
+                table: "Attachments",
+                column: "AttachmentID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "CustomerID_Attachments",
+                table: "Attachments",
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
-                name: "ServiceID_idx",
-                table: "books",
+                name: "CustomerID_Books_CustomerID",
+                table: "Books",
+                column: "CustomerID");
+
+            migrationBuilder.CreateIndex(
+                name: "ServiceID_Books_ServiceID",
+                table: "Books",
                 column: "ServiceID");
 
             migrationBuilder.CreateIndex(
-                name: "ServiceTypeID_idx",
-                table: "books",
+                name: "ServiceTypeID_Books_ServiceTypeID",
+                table: "Books",
                 column: "ServiceTypeID");
 
             migrationBuilder.CreateIndex(
                 name: "StartDate",
-                table: "books",
+                table: "Books",
                 columns: new[] { "BookID", "StartDate" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "CustomerIDX",
-                table: "bookscancel",
+                name: "CustomerID_BookCancel_CustomerID",
+                table: "BooksCancel",
                 column: "CustomerID");
 
             migrationBuilder.CreateIndex(
-                name: "ServiceIDX",
-                table: "bookscancel",
+                name: "ServiceID_BookCancel_ServiceID",
+                table: "BooksCancel",
                 column: "ServiceID");
 
             migrationBuilder.CreateIndex(
-                name: "ServiceTypeIDX",
-                table: "bookscancel",
+                name: "ServiceTypeID_BookCacnel_ServiceTypeID",
+                table: "BooksCancel",
                 column: "ServiceTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "ServiceID_idx1",
-                table: "servicetype",
+                name: "ServiceID_idx",
+                table: "ServiceType",
                 column: "ServiceID");
 
             migrationBuilder.CreateIndex(
                 name: "SettingName",
-                table: "settings",
+                table: "Settings",
                 column: "SettingName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "DayOfWeek_UNIQUE",
-                table: "workhours",
+                table: "WorkHours",
                 column: "DayOfWeek",
                 unique: true);
         }
@@ -311,37 +346,40 @@ namespace Miritush.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "books");
+                name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "bookscancel");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "closedays");
+                name: "BooksCancel");
 
             migrationBuilder.DropTable(
-                name: "holidays");
+                name: "CloseDays");
 
             migrationBuilder.DropTable(
-                name: "lockhours");
+                name: "Holidays");
 
             migrationBuilder.DropTable(
-                name: "settings");
+                name: "LockHours");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "workhours");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "customers");
+                name: "WorkHours");
 
             migrationBuilder.DropTable(
-                name: "servicetype");
+                name: "Customers");
 
             migrationBuilder.DropTable(
-                name: "services");
+                name: "ServiceType");
+
+            migrationBuilder.DropTable(
+                name: "Services");
         }
     }
 }

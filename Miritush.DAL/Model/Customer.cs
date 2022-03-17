@@ -10,6 +10,8 @@ namespace Miritush.DAL.Model
         public Customer()
         {
             Books = new HashSet<Book>();
+            Attachments = new HashSet<Attachment>();
+
         }
 
         public int CustomerId { get; set; }
@@ -22,5 +24,7 @@ namespace Miritush.DAL.Model
         public byte? Active { get; set; }
 
         public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Attachment> Attachments { get; set; }
+
     }
 }
