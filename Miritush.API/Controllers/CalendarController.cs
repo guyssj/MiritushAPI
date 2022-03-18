@@ -63,7 +63,7 @@ namespace Miritush.API.Controllers
                 data.StartDate,
                 data.CustomerId,
                 data.StartAt,
-                data.ServiceTypeId);
+                data.ServiceTypeIds);
 
             return StatusCode(StatusCodes.Status201Created);
         }

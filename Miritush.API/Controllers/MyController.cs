@@ -75,7 +75,7 @@ namespace Miritush.API.Controllers
                 data.StartDate,
                 userContext.Identity.UserId,
                 data.StartAt,
-                data.ServiceTypeId);
+                data.ServiceTypeIds);
 
             return StatusCode(StatusCodes.Status201Created);
         }
@@ -123,8 +123,6 @@ namespace Miritush.API.Controllers
         {
             var res = await attachmentsService.GetAttachmentsByCustomerIdAsync(userContext.Identity.UserId);
             return mapper.Map<List<DTO.Attachment>>(res);
-            //return $"data:{res.MimeType};base64,{Convert.ToBase64String(res.Content)}";
-            //return File(res, "image/jpg");
         }
         [AllowAnonymous]
         [HttpGet("createUser")]

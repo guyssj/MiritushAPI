@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.DTO.Const;
+using Miritush.Helpers.Exceptions;
 using Miritush.Services.Abstract;
 using Miritush.Services.Helpers;
 
@@ -72,44 +73,55 @@ namespace Miritush.Services
             DateTime startDate,
             int customerId,
             int startAt,
-            int serviceTypeId)
+            List<int> serviceTypeList)
         {
             if (customerId == 0)
-                throw new Exception(); //[GG] Change to exption handler
+                throw new NotFoundException("Customer was not found");
 
             if (await dbContext.Books.AnyAsync(book =>
                   book.StartDate == startDate
                   && book.StartAt == startAt))
                 throw new Exception(); //[GG] Change to exption handler
 
-            var serviceTypeQuery = dbContext.Servicetypes
-                .Where(se => se.ServiceTypeId == serviceTypeId);
-
-            var serviceId = await serviceTypeQuery
-                .Select(st => st.ServiceId)
-                .FirstOrDefaultAsync();
-
-            if (serviceId <= 0)
-                throw new ArgumentNullException("your servicetypeId not exist"); //Exeption Manager
-
-            var duration = await serviceTypeQuery
-                .Select(st => st.Duration)
-                .FirstOrDefaultAsync();
-
-            var book = new DAL.Model.Book()
+            for (int i = 0; i < serviceTypeList.Count; i++)
             {
-                CustomerId = customerId,
-                StartDate = startDate,
-                StartAt = startAt,
-                ServiceId = serviceId,
-                ServiceTypeId = serviceTypeId,
-                Durtion = duration.GetValueOrDefault()
-            };
-            dbContext.Books.Add(book);
-            await dbContext.SaveChangesAsync();
 
-            if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
-                await SendBookConfirm(book.BookId);
+                var serviceTypeQuery = dbContext.Servicetypes
+                    .Where(se => se.ServiceTypeId == serviceTypeList[i]);
+
+
+
+                var serviceId = await serviceTypeQuery
+                    .Select(st => st.ServiceId)
+                    .FirstOrDefaultAsync();
+
+                if (serviceId <= 0)
+                    throw new ArgumentNullException("your servicetypeId not exist"); //Exeption Manager
+
+                var duration = await serviceTypeQuery
+                    .Select(st => st.Duration)
+                    .FirstOrDefaultAsync();
+
+                var book = new DAL.Model.Book()
+                {
+                    CustomerId = customerId,
+                    StartDate = startDate,
+                    StartAt = startAt,
+                    ServiceId = serviceId,
+                    ServiceTypeId = serviceTypeList[i],
+                    Durtion = duration.GetValueOrDefault()
+                };
+                dbContext.Books.Add(book);
+                await dbContext.SaveChangesAsync();
+
+                if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
+                    await SendBookConfirm(book.BookId);
+
+                if(i == 0)
+                   startAt += duration.GetValueOrDefault();
+            }
+
+
 
 
             //push notfication to app

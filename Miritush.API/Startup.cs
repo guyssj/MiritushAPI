@@ -28,6 +28,7 @@ using System.Web;
 using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Miritush.API.Exceptions;
 
 namespace Miritush.API
 {
@@ -212,6 +213,10 @@ namespace Miritush.API
 
             app.UseApiVersioning();
             app.UseHttpsRedirection();
+
+
+            // global error handler
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseRouting();
             app.UseAuthentication();

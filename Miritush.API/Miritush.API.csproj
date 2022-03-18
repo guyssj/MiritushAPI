@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Miritush.DAL\Miritush.DAL.csproj" />
+    <ProjectReference Include="..\Miritush.Helpers\Miritush.Helpers.csproj" />
     <ProjectReference Include="..\Miritush.Services\Miritush.Services.csproj" />
   </ItemGroup>
 

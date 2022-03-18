@@ -20,5 +20,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Miritush.DAL\Miritush.DAL.csproj" />
 		<ProjectReference Include="..\Miritush.DTO\Miritush.DTO.csproj" />
+		<ProjectReference Include="..\Miritush.Helpers\Miritush.Helpers.csproj" />
 	</ItemGroup>
 </Project>

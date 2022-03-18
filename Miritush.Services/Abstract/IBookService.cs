@@ -15,7 +15,7 @@ namespace Miritush.Services.Abstract
             DateTime startDate,
             int customerId,
             int startAt,
-            int serviceTypeId);
+            List<int> serviceTypeId);
         Task UpdateBookAsync(
             int bookId,
             DateTime startDate,

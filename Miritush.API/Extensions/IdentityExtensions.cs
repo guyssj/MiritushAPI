@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Miritush.Helpers.Exceptions;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Miritush.API.Extensions
         internal static async Task<ClaimsPrincipal> AttachIdentityToContext(this HttpContext context, ClaimsPrincipal principal)
         {
             if (!principal.Identity.IsAuthenticated)
-                throw new System.Exception(); //[GG] change to relevent exeption
+                throw new UnauthorizedException();
 
             var username = principal.Identity.Name;
             if (username == null) return principal;
@@ -31,7 +32,7 @@ namespace Miritush.API.Extensions
                     .Where(customer => customer.PhoneNumber == username)
                     .FirstOrDefaultAsync();
                 if (customer == null)
-                    throw new System.Exception(); //[GG]change to expection handler
+                    throw new UnauthorizedException();
             }
 
 

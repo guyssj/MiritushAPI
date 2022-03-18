@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.API", "Miritush.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.DAL", "Miritush.DAL\Miritush.DAL.csproj", "{D8E8BB58-921D-413C-B720-E09FCFA48C41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Services", "Miritush.Services\Miritush.Services.csproj", "{59793445-E180-4849-A684-909DFB6CBA75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.Services", "Miritush.Services\Miritush.Services.csproj", "{59793445-E180-4849-A684-909DFB6CBA75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Tests", "Miritush.Tests\Miritush.Tests.csproj", "{3328E9DD-2D61-454F-B151-3F724E792F0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.Tests", "Miritush.Tests\Miritush.Tests.csproj", "{3328E9DD-2D61-454F-B151-3F724E792F0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.DTO", "Miritush.DTO\Miritush.DTO.csproj", "{518E21C8-0509-4B1F-ABF6-5476776B1579}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.DTO", "Miritush.DTO\Miritush.DTO.csproj", "{518E21C8-0509-4B1F-ABF6-5476776B1579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Helpers", "Miritush.Helpers\Miritush.Helpers.csproj", "{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{518E21C8-0509-4B1F-ABF6-5476776B1579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

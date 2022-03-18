@@ -10,7 +10,7 @@ namespace Miritush.API.Model
         public DateTime StartDate { get; set; }
         public int StartAt { get; set; }
         public int CustomerId { get; set; }
-        public int ServiceTypeId { get; set; }
+        public List<int> ServiceTypeIds { get; set; }
         public int Duration { get; set; }
     }
 }
