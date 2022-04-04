@@ -12,6 +12,7 @@ using Miritush.Services.Helpers;
 using Miritush.DTO.Const;
 using Miritush.DTO.Enums;
 using System.Net.Http;
+using Miritush.Helpers.Exceptions;
 
 namespace Miritush.Services
 {
@@ -42,7 +43,7 @@ namespace Miritush.Services
             var user = await dbContext.Users.FindAsync(id);
 
             if (user == null)
-                return null; //[GG] change to exption handler
+                throw new NotFoundException("User not found");
             return mapper.Map<DTO.User>(user);
         }
         public async Task<DTO.User> Create(
@@ -100,7 +101,7 @@ namespace Miritush.Services
                 .FirstOrDefaultAsync();
 
             if (user == null)
-                throw new Exception("user not exsit");
+                throw new UnauthorizedException("user not exsit");
 
             var passwordHasher = new PasswordHasher<DAL.Model.User>();
             var res = passwordHasher.VerifyHashedPassword(user, user.Password, password);
@@ -120,7 +121,7 @@ namespace Miritush.Services
                     break;
                 case GrantType.password:
                     if (!await VerifyUserPasswordAsync(userName, password))
-                        return null;
+                        throw new UnauthorizedException("your user name or password is incorret");
                     return JWTHelper.CreateToken(
                         configuration["Auth:Secret"],
                         configuration["Auth:ValidIssuer"],
@@ -138,7 +139,7 @@ namespace Miritush.Services
                 default:
                     break;
             }
-            return null;
+            throw new UnauthorizedException();
         }
 
         private async Task<DTO.Customer> AssertCustomerFromOtpAsync(
@@ -150,8 +151,10 @@ namespace Miritush.Services
                 .FirstOrDefaultAsync();
 
             if (customer.Otp != optCode)
-                return null; //[GG] Return expeption
+                throw new UnauthorizedException("Otp is incorect");
+            customer.Otp = null;
 
+            await dbContext.SaveChangesAsync();
             return mapper.Map<DTO.Customer>(customer);
 
         }
@@ -162,14 +165,14 @@ namespace Miritush.Services
                 throw new ArgumentNullException(nameof(phoneNumber));
 
             var code = new Random()
-                .Next(11111, 99999);
+                .Next(111111, 999999);
 
             var customer = await dbContext.Customers
                 .Where(cus => cus.PhoneNumber == phoneNumber)
                 .FirstOrDefaultAsync();
 
             if (customer == null)
-                throw new Exception("customer not found"); //[GG] Change to expection handler
+                throw new NotFoundException("Customer not found");
 
             customer.Otp = code;
             await dbContext.SaveChangesAsync();
@@ -179,12 +182,12 @@ namespace Miritush.Services
                 .WithUri()
                 .WithSender("Miritush")
                 .ToPhoneNumber(phoneNumber)
-                .Message(" זה קוד האימות שלך" + code)
+                .Message($"זה קוד האימות שלך {code}")
                 .GetAsync())
                 .AssertResultAsync<GlobalSmsResult>();
 
             if (!smsResults.Success)
-                throw new Exception(); //[GG] change to exception handler
+                throw new Exception("Sms not send");
         }
     }
 }

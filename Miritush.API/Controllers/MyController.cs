@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Model;
@@ -32,7 +31,7 @@ namespace Miritush.API.Controllers
             IBookService bookService,
             IMapper mapper,
             IUploadFileService uploadFileService,
-            IAttachmentsService attachmentsService )
+            IAttachmentsService attachmentsService)
         {
             this.userService = userService;
             this.userContext = userContext;
@@ -113,7 +112,7 @@ namespace Miritush.API.Controllers
         [HttpGet("files/{fileName}")]
         public async Task<object> GetFile(string fileName)
         {
-            var res = await uploadFileService.GetFilesFolderAsync($"62/{fileName}");
+            var res = await uploadFileService.GetFilesFolderAsync($"{userContext.Identity.UserId}/{fileName}");
             //return new { image = $"data:{res.MimeType};base64,{Convert.ToBase64String(res.Content)}" };
             return File(res.Content, res.MimeType);
         }
@@ -125,7 +124,20 @@ namespace Miritush.API.Controllers
             return mapper.Map<List<DTO.Attachment>>(res);
         }
         [AllowAnonymous]
-        [HttpGet("createUser")]
+        [HttpGet("Books/{arrivalToken:Guid}")]
+        public async Task<DTO.Book> GetBookByArrivalToken(Guid arrivalToken)
+        {
+            return await bookService.GetBookByArrivalToken(arrivalToken);
+        }
+        [AllowAnonymous]
+        [HttpPut("Books/{arrivalToken:Guid}")]
+        public async Task<IActionResult> SetArrivalConfirmation([FromRoute] Guid arrivalToken, SetArrivalData data)
+        {
+            await bookService.SetArrival(arrivalToken, (int)data.arrivalStatus);
+            return Ok();
+        }
+        [AllowAnonymous]
+        [HttpGet("CreateUser")]
         public async Task createuser([FromQuery] string userName, [FromQuery] string password)
         {
             await userService.Create(userName, password);

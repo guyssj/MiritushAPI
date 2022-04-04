@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Miritush.DTO.Enums;
 
 namespace Miritush.DTO
 {
@@ -15,5 +13,6 @@ namespace Miritush.DTO
         public int ServiceId { get; set; }
         public int ServiceTypeId { get; set; }
         public string Notes { get; set; }
+        public ArrivalConfirm Arrival { get; set; }
     }
 }

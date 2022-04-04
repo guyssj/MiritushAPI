@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -15,6 +16,8 @@ namespace Miritush.DAL.Model
         public int Durtion { get; set; }
         public int ServiceTypeId { get; set; }
         public string Notes { get; set; }
+        public Guid? ArrivalToken { get; set; }
+        public int ArrivalStatus { get; set; }
 
         public virtual Customer Customer { get; set; }
         public virtual Service Service { get; set; }

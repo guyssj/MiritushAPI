@@ -25,11 +25,9 @@ namespace Miritush.Services
         public async Task<List<DTO.Customer>> GetCustomersAsync()
         {
             var customers = await dbContext.Customers.ToListAsync();
-
             return mapper.Map<List<DTO.Customer>>(customers);
-
-
         }
+
         public async Task<DTO.Customer> GetCustomerByIdAsync(int id)
         {
             var customer = await dbContext.Customers.FindAsync(id);

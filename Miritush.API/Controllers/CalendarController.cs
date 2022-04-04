@@ -36,8 +36,6 @@ namespace Miritush.API.Controllers
         [ValidateModel]
         public async Task<IActionResult> CreateCloseDay(CreateCloseDayData data)
         {
-            var use = User.Identity;
-            await bookService.GetBooksForCalendar();
             await _calendarService.CreateCloseDay(data.Date, data.Notes);
             return StatusCode(StatusCodes.Status201Created);
         }

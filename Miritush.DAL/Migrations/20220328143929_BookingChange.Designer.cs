@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Miritush.DAL.Model;
 
 namespace Miritush.DAL.Migrations
 {
     [DbContext(typeof(booksDbContext))]
-    partial class booksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220328143929_BookingChange")]
+    partial class BookingChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,8 +55,11 @@ namespace Miritush.DAL.Migrations
                         .HasColumnType("int(11)")
                         .HasColumnName("BookID");
 
-                    b.Property<int>("ArrivalStatus")
-                        .HasColumnType("int(11)");
+                    b.Property<int>("Arrival")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)")
+                        .HasColumnName("Due")
+                        .HasDefaultValueSql("0");
 
                     b.Property<string>("ArrivalToken")
                         .HasColumnType("VARCHAR(64)")

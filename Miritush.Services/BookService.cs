@@ -41,6 +41,55 @@ namespace Miritush.Services
             return mapper.Map<DTO.Book>(books);
         }
 
+        private async Task<List<Book>> GetBooksByDateAsync(DateTime date)
+        {
+            var books = await dbContext.Books
+                .Where(book => book.StartDate.Date == date.Date)
+                .ToListAsync();
+
+            return books;
+        }
+
+        private async Task<List<Book>> GetBooksByRangeDatesAsync(DateTime startDate, DateTime endDate)
+        {
+            //[GG] test for end date in unit tests!
+            var books = await dbContext.Books
+                .Where(book => book.StartDate.Date >= startDate.Date
+                    && book.StartDate <= endDate.AddDays(1).Date)
+                .ToListAsync();
+
+            return books;
+        }
+
+        public async Task<int> GetTodayBookCountAsync()
+        {
+            var books = await GetBooksByDateAsync(DateTime.UtcNow);
+
+            return books.Count;
+        }
+
+        public async Task<int> GetMonthBooksCountAsync()
+        {
+            var date = DateTime.UtcNow;
+            var firstDayInMonth = date.AddDays(1 - date.Day);
+            var lastDateInMonth = date.AddDays(DateTime.DaysInMonth(date.Year, date.Month) - 1);
+            var books = await GetBooksByRangeDatesAsync(firstDayInMonth, lastDateInMonth);
+
+            return books.Count;
+        }
+
+        public async Task<List<Book>> GetNextBooks()
+        {
+            var books = await dbContext.Books
+                .Where(book => book.StartDate.Date >= DateTime.UtcNow.Date)
+                .Take(5)
+                .OrderBy(b => b.StartAt)
+                .ToListAsync();
+
+            return books;
+
+        }
+
         public async Task<List<DTO.CalendarEvent<DTO.Book>>> GetBooksForCalendar()
         {
             var books = await dbContext.Books
@@ -69,6 +118,15 @@ namespace Miritush.Services
             return events;
         }
 
+        private async Task<Guid> CreateArrivalToken(Book book)
+        {
+            book.ArrivalToken = Guid.NewGuid();
+
+            await dbContext.SaveChangesAsync();
+            return book.ArrivalToken.GetValueOrDefault();
+            //create a tinyURL
+        }
+
         public async Task SetBookAsync(
             DateTime startDate,
             int customerId,
@@ -79,9 +137,15 @@ namespace Miritush.Services
                 throw new NotFoundException("Customer was not found");
 
             if (await dbContext.Books.AnyAsync(book =>
-                  book.StartDate == startDate
+                  book.StartDate.Date == startDate.Date
                   && book.StartAt == startAt))
-                throw new Exception(); //[GG] Change to exption handler
+                throw new ConflictException("This is not free day and time");
+
+            if (await dbContext.Books
+                .Where(b => b.StartDate.Date == startDate.Date)
+                .AnyAsync(book => book.StartAt <= startAt
+                        && startAt < (book.StartAt + book.Durtion)))
+                throw new ConflictException("This is not free day and time");
 
             for (int i = 0; i < serviceTypeList.Count; i++)
             {
@@ -89,27 +153,27 @@ namespace Miritush.Services
                 var serviceTypeQuery = dbContext.Servicetypes
                     .Where(se => se.ServiceTypeId == serviceTypeList[i]);
 
-
-
                 var serviceId = await serviceTypeQuery
                     .Select(st => st.ServiceId)
                     .FirstOrDefaultAsync();
 
+
                 if (serviceId <= 0)
-                    throw new ArgumentNullException("your servicetypeId not exist"); //Exeption Manager
+                    throw new ArgumentNullException("your serviceType Id not exist"); //Exeption Manager
 
                 var duration = await serviceTypeQuery
                     .Select(st => st.Duration)
                     .FirstOrDefaultAsync();
 
-                var book = new DAL.Model.Book()
+                var book = new DAL.Model.Book()  // B900-B960
                 {
                     CustomerId = customerId,
                     StartDate = startDate,
                     StartAt = startAt,
                     ServiceId = serviceId,
                     ServiceTypeId = serviceTypeList[i],
-                    Durtion = duration.GetValueOrDefault()
+                    Durtion = duration.GetValueOrDefault(),
+                    ArrivalToken = Guid.NewGuid()
                 };
                 dbContext.Books.Add(book);
                 await dbContext.SaveChangesAsync();
@@ -117,12 +181,9 @@ namespace Miritush.Services
                 if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
                     await SendBookConfirm(book.BookId);
 
-                if(i == 0)
-                   startAt += duration.GetValueOrDefault();
+                if (i == 0)
+                    startAt += duration.GetValueOrDefault();
             }
-
-
-
 
             //push notfication to app
         }
@@ -180,7 +241,7 @@ namespace Miritush.Services
         {
             var book = await dbContext.Books.FindAsync(bookId);
             if (book == null)
-                throw new Exception("book not exsits"); //[GG] change to exeption Handler
+                throw new NotFoundException();
 
             dbContext.Books.Remove(book);
             await dbContext.SaveChangesAsync();
@@ -190,7 +251,7 @@ namespace Miritush.Services
         {
 
             if (userContext.Identity.UserId == 0)
-                throw new Exception(); //[GG] change to exeption handler
+                throw new Exception();
             //need to change display BookExtended with include
             return await GetBooksByCustomerIdAsync(userContext.Identity.UserId);
         }
@@ -214,6 +275,64 @@ namespace Miritush.Services
 
             return await GetBooksByCustomerIdAsync(customerId);
         }
+        public async Task SetArrival(Guid arrivalToken, int arrivalConfrim)
+        {
+            if (arrivalToken == Guid.Empty)
+                throw new NotFoundException();
+
+            var book = await dbContext.Books
+                .Where(b => b.ArrivalToken == arrivalToken)
+                .FirstOrDefaultAsync();
+
+            book.ArrivalStatus = arrivalConfrim;
+            book.ArrivalToken = null;
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<DTO.Book> GetBookByArrivalToken(Guid arrivalToken)
+        {
+            var book = await dbContext.Books
+                .Include(c => c.Customer)
+                .Include(st => st.ServiceType)
+                .Where(b => b.ArrivalToken == arrivalToken)
+                .FirstOrDefaultAsync();
+
+            return mapper.Map<DTO.Book>(book);
+        }
+        public async Task<List<DTO.Book>> SendRemainderBook()
+        {
+            var RemainderBooks = await dbContext.Books
+                .Include(c => c.Customer)
+                .Include(st => st.ServiceType)
+                .Where(b => b.StartDate.Date == DateTime.Now.AddDays(1).Date)
+                .ToListAsync();
+
+            var messageTemplate = await settingsService.GetValue(SettingsNames.SMS_TEMPLATE_REMINDER);
+            foreach (var book in RemainderBooks)
+            {
+                //TODO : [GG] need to add LINK for Arrival confirm
+                var parameters = new Dictionary<string, string>();
+                parameters.Add("{FirstName}", book.Customer.FirstName);
+                parameters.Add("{LastName}", book.Customer.LastName);
+                parameters.Add("{Date}", book.StartDate.ToShortDateString());
+                parameters.Add("{Time}", book.StartDate.Date.AddMinutes(book.StartAt).ToShortTimeString());
+                parameters.Add("{ServiceType}", book.ServiceType.ServiceTypeName);
+                parameters.Add("{Link}", "link");
+                parameters.Add("\\n", System.Environment.NewLine);
+
+                var message = MessageHelper.ReplacePlaceHolder(messageTemplate, parameters);
+                //send sms or not
+                var results = clientFactory
+                    .GetGlobalSmsSenderClient()
+                    .WithUri()
+                    .WithSender("Miritush")
+                    .ToPhoneNumber(book.Customer.PhoneNumber)
+                    .Message(message)
+                    .GetAsync();
+            }
+
+            return mapper.Map<List<DTO.Book>>(RemainderBooks);
+        }
 
         private async Task<bool> SendBookConfirm(int bookId)
         {
@@ -235,7 +354,7 @@ namespace Miritush.Services
 
             var message = MessageHelper.ReplacePlaceHolder(messageTemplate, parameters);
             //send sms or not
-            var results = await (await clientFactory
+            var results = (await clientFactory
                 .GetGlobalSmsSenderClient()
                 .WithUri()
                 .WithSender("Miritush")
@@ -244,7 +363,7 @@ namespace Miritush.Services
                 .GetAsync())
                 .AssertResultAsync<DTO.GlobalSmsResult>();
 
-            return results.Success;
+            return true;
         }
 
     }

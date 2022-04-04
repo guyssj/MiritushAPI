@@ -36,7 +36,7 @@ namespace Miritush.DAL.Model
             {
                 var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
 
-                optionsBuilder.UseMySql("server=localhost;user=guyssj;password=guygoldi;database=reptouch_bookNail;port=3306", serverVersion);
+                optionsBuilder.UseMySql("server=localhost;user=root;password=root;database=BookNail;port=8889", serverVersion);
             }
         }
 
@@ -76,6 +76,17 @@ namespace Miritush.DAL.Model
                     .HasColumnType("int(11)")
                     .HasColumnName("ServiceID")
                     .HasDefaultValueSql(null);
+
+                entity.Property(e => e.ArrivalStatus)
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.ArrivalToken)
+                    .HasColumnType("VARCHAR(64)")
+                    .HasColumnName("ArrivalToken");
+
+                entity.HasIndex(e => e.ArrivalToken, "ArrivalToken_unique")
+                    .IsUnique();
 
                 entity.Property(e => e.ServiceTypeId)
                     .HasColumnType("int(11)")
@@ -198,7 +209,7 @@ namespace Miritush.DAL.Model
 
                 entity.Property(e => e.Color)
                     .HasMaxLength(45)
-                    .HasDefaultValueSql("#c96d9f");
+                    .HasDefaultValueSql("'#c96d9f'");
 
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(250)
@@ -380,6 +391,13 @@ namespace Miritush.DAL.Model
                 entity.Property(e => e.CloseTime).HasColumnType("int(11)");
 
                 entity.Property(e => e.OpenTime).HasColumnType("int(11)");
+
+                entity.HasData(new Workhour { DayOfWeek = 1, OpenTime = 540, CloseTime = 1095 },
+                new Workhour { DayOfWeek = 2, OpenTime = 540, CloseTime = 1095 },
+                new Workhour { DayOfWeek = 3, OpenTime = 540, CloseTime = 1095 },
+                new Workhour { DayOfWeek = 4, OpenTime = 540, CloseTime = 1095 },
+                new Workhour { DayOfWeek = 5, OpenTime = 540, CloseTime = 930 },
+                new Workhour { DayOfWeek = 6, OpenTime = 540, CloseTime = 840 });
             });
 
             modelBuilder.Entity<Attachment>(entity =>

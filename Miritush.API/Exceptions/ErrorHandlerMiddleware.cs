@@ -28,7 +28,7 @@ namespace Miritush.API.Exceptions
                 var response = context.Response;
                 response.ContentType = "application/json";
 
-                var errorHandler = new DTO.ErrorMessageResult();             
+                var errorHandler = new DTO.ErrorMessageResult();
 
                 switch (error)
                 {
@@ -46,6 +46,12 @@ namespace Miritush.API.Exceptions
                         response.StatusCode = (int)e.Code;
                         break;
                     case UnauthorizedException e:
+                        errorHandler.StatusCode = (int)e.Code;
+                        errorHandler.Message = e.Message;
+                        errorHandler.StackTrace = e.StackTrace;
+                        response.StatusCode = (int)e.Code;
+                        break;
+                    case ConflictException e:
                         errorHandler.StatusCode = (int)e.Code;
                         errorHandler.Message = e.Message;
                         errorHandler.StackTrace = e.StackTrace;

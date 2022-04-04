@@ -86,7 +86,7 @@ namespace Miritush.Services
         {
             var date = DateTime.UtcNow.AddDays(31);
             var listFreeSlots = new List<FreeSlots>();
-            var endDate = new DateTime(date.Year, date.Month, startDate.Day);
+            var endDate = new DateTime(date.Year, date.Month - 1, startDate.Day);
 
             foreach (var day in EachDay(startDate, endDate))
             {
@@ -180,7 +180,7 @@ namespace Miritush.Services
                 .ToList();
 
             if (!resHolidays.Any())
-                throw new Exception(HttpStatusCode.NoContent.ToString()); //[GG] need to change ExepctionHandler
+                throw new Exception("No more holdiday to update");
 
             foreach (var holiday in resHolidays)
             {

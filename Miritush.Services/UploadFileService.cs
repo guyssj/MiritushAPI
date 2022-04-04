@@ -41,11 +41,6 @@ namespace Miritush.Services
             }
             //await GetFilesFolderAsync(folderName);
         }
-
-        public async Task<bool> GetFileBlobAsync(string fileName)
-        {
-            return true;
-        }
         private byte[] ReadStream(Stream responseStream)
         {
             byte[] buffer = new byte[16 * 1024];
@@ -75,14 +70,10 @@ namespace Miritush.Services
                 var listobj = await client.ListObjectsV2Async(objReq);
                 var fileTransferUtility = new TransferUtility(client);
                 var filesList = new List<DTO.BlobFile>();
-                listobj.S3Objects.ForEach(obj =>
-                {
-                    filesList.Add(new DTO.BlobFile { FileName = obj.Key });
-                });
 
                 foreach (var item in listobj.S3Objects)
                 {
-                   filesList.Add(await GetFilesFolderAsync(item.Key));
+                    filesList.Add(await GetFilesFolderAsync(item.Key));
                 }
                 return filesList;
             }
