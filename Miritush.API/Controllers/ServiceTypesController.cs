@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Model;
 using Miritush.Services.Abstract;
@@ -20,17 +21,21 @@ namespace Miritush.API.Controllers
             _serviceTypeService = serviceTypeService;
 
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<List<DTO.ServiceType>> ListServiceTypes()
             => await _serviceTypeService.List();
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<DTO.ServiceType> GetById(int id)
 
             => await _serviceTypeService.Get(id);
+        [AllowAnonymous]
         [HttpGet("service/{serviceId}")]
         public async Task<List<DTO.ServiceType>> GetByService(int serviceId)
-            => await _serviceTypeService.GetByService(serviceId);
+             => await _serviceTypeService.GetByService(serviceId);
+
+        [AllowAnonymous]
         [HttpPost()]
         public async Task CreateServiceType(CreateServiceTypeData data)
             => await _serviceTypeService.CreateServiceType(

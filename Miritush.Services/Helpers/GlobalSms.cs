@@ -4,7 +4,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Miritush.Services.Helpers
 {
@@ -52,7 +57,6 @@ namespace Miritush.Services.Helpers
         }
         public GlobalSmsHttpRequest Message(string message)
         {
-
             var uriWithQuery = QueryHelpersCustom.AddQueryString(
                 request.RequestUri.OriginalString,
                 "txtSMSmessage",
@@ -99,7 +103,6 @@ namespace Miritush.Services.Helpers
         public async Task<HttpResponseMessage> GetAsync()
         {
             request.Method = HttpMethod.Get;
-
             using var client = this.httpClient;
             this.response = await client.SendAsync(request);
 

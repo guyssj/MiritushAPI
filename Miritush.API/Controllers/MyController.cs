@@ -44,10 +44,7 @@ namespace Miritush.API.Controllers
         [HttpGet("details")]
         public async Task<ProfileDetailsResult> GetUserDetails()
         {
-            var user = await userService
-                .GetAsync(userContext.Identity.UserId);
-
-            if (user == null)
+            if (userContext.Identity.RoleName == UserRoles.User)
             {
                 return new ProfileDetailsResult
                 {
@@ -55,7 +52,8 @@ namespace Miritush.API.Controllers
                     PhoneNumber = userContext.Identity.Name
                 };
             }
-
+            var user = await userService
+                .GetAsync(userContext.Identity.UserId);
             return new ProfileDetailsResult { Name = userContext.Identity.Name, PhoneNumber = user.RegId };
 
         }

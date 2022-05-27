@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Model;
 using Miritush.DTO;
@@ -21,12 +22,13 @@ namespace Miritush.API.Controllers
             _lockHoursService = lockHoursService;
             _servicesService = servicesService;
         }
+        [AllowAnonymous]
 
         [HttpGet]
         public async Task<List<DTO.Service>> GetServices()
             => await _servicesService.GetServicesAsync();
 
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<DTO.Service> Create(CreateServiceData serviceData)
             => await _servicesService.CreateServiceAsync(serviceData.ServiceName);

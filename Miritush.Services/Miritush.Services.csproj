@@ -16,6 +16,7 @@
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.10" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
+		<PackageReference Include="Telegram.Bot" Version="17.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Miritush.DAL\Miritush.DAL.csproj" />

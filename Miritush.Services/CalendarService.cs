@@ -11,7 +11,12 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Miritush.Services
 {
@@ -86,14 +91,14 @@ namespace Miritush.Services
         {
             var date = DateTime.UtcNow.AddDays(31);
             var listFreeSlots = new List<FreeSlots>();
-            var endDate = new DateTime(date.Year, date.Month - 1, startDate.Day);
+            var endDate = new DateTime(date.Year, date.Month, startDate.Day);
 
             foreach (var day in EachDay(startDate, endDate))
             {
                 var slots = await timeSlotService.GetTimeSlotsAsync(day, duration);
                 slots.ForEach(slot =>
                 {
-                    listFreeSlots.Add(new FreeSlots(day, slot.Id, slot.Id + duration));
+                    listFreeSlots.Add(new FreeSlots(Guid.NewGuid(), day.Date, slot.Id, slot.Id + duration));
                 });
             }
 
@@ -134,7 +139,7 @@ namespace Miritush.Services
         }
         private IEnumerable<DateTime> EachDay(DateTime from, DateTime thru)
         {
-            for (var day = from.Date; day.Date <= thru.Date; day = day.AddDays(1))
+            for (var day = from; day.Date <= thru.Date; day = day.AddDays(1))
                 yield return day;
         }
         private async Task<List<DTO.CloseDay>> GetCloseDaysAsync()

@@ -39,7 +39,13 @@ namespace Miritush.Services
             var minAfterWork = int.Parse(MIN_AFTER_WORK.SettingValue);
 
             var timeSlotList = GenerateTimeSlots(workHour);
-
+            if (date.Date == DateTime.UtcNow.Date)
+            {
+                var minfromDate = date.TimeOfDay.TotalMinutes;
+                timeSlotList = timeSlotList
+                    .Where(time => time.Id >= minfromDate)
+                    .ToList();
+            }
             var books = await dbContext.Books
                 .Where(x => x.StartDate.Date == date.Date)
                 .ToListAsync();
@@ -50,20 +56,20 @@ namespace Miritush.Services
 
             var existSlots = new List<int>();
             books.ForEach(x =>
-            {
-                for (int i = x.StartAt; i < x.StartAt + x.Durtion; i += 5)
-                {
-                    existSlots.Add(i);
-                    if (i == x.StartAt + x.Durtion - 5)
                     {
-                        timeSlotList.Add(new TimeSlot()
+                        for (int i = x.StartAt; i < x.StartAt + x.Durtion; i += 5)
                         {
-                            Id = i + 5,
-                            Time = TimeSpan.FromMinutes(i + 5).ToString(@"hh\:mm")
-                        });
-                    }
-                }
-            });
+                            existSlots.Add(i);
+                            if (i == x.StartAt + x.Durtion - 5)
+                            {
+                                timeSlotList.Add(new TimeSlot()
+                                {
+                                    Id = i + 5,
+                                    Time = TimeSpan.FromMinutes(i + 5).ToString(@"hh\:mm")
+                                });
+                            }
+                        }
+                    });
 
             LockHours.ForEach(x =>
             {

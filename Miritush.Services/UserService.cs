@@ -13,6 +13,11 @@ using Miritush.DTO.Const;
 using Miritush.DTO.Enums;
 using System.Net.Http;
 using Miritush.Helpers.Exceptions;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
+using Telegram.Bot;
+using System.Threading;
 
 namespace Miritush.Services
 {
@@ -177,7 +182,7 @@ namespace Miritush.Services
             customer.Otp = code;
             await dbContext.SaveChangesAsync();
 
-            var smsResults = await (await httpClientFactory
+            (await httpClientFactory
                 .GetGlobalSmsSenderClient()
                 .WithUri()
                 .WithSender("Miritush")
@@ -186,8 +191,8 @@ namespace Miritush.Services
                 .GetAsync())
                 .AssertResultAsync<GlobalSmsResult>();
 
-            if (!smsResults.Success)
-                throw new Exception("Sms not send");
+            // if (!smsResults)
+            //     throw new Exception("Sms not send");
         }
     }
 }

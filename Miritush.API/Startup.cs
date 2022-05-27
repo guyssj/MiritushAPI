@@ -212,7 +212,7 @@ namespace Miritush.API
             });
 
             app.UseApiVersioning();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
 
             // global error handler
