@@ -29,6 +29,9 @@ namespace Miritush.DAL.Model
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Workhour> Workhours { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
+        public virtual DbSet<ProductCategory> ProductCategorys { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -432,6 +435,64 @@ namespace Miritush.DAL.Model
                     .HasConstraintName("CustomerID_Attachments");
             });
 
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.ToTable("ProductCategorys");
+
+                entity.HasIndex(e => new { e.Id }, "CategoryID")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CategoryID");
+
+                entity.Property(e => e.Name)
+                    .HasColumnType("varchar(5000)")
+                    .HasColumnName("CategoryName");
+
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Products");
+
+                entity.HasIndex(e => e.CategoryID, "CategoryID_Products");
+
+                entity.HasIndex(e => new { e.Id }, "ProductID")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ProductID");
+
+                entity.Property(e => e.CategoryID)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CategoryID")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.Name)
+                    .HasColumnType("varchar(5000)")
+                    .HasColumnName("ProductName");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("varchar(5000)")
+                    .HasColumnName("ProductDescription")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.Active)
+                    .HasColumnType("tinyint(4)")
+                    .HasDefaultValueSql("'1'");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.CategoryID)
+                    .HasConstraintName("CategoryID_Products");
+
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 
