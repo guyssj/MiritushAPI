@@ -15,6 +15,9 @@ namespace Miritush.Services.DomainProfile
             CreateMap<DAL.Model.Service, DTO.Service>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.ServiceId));
 
+            CreateMap<DAL.Model.ProductCategory, DTO.ProductCategory>();
+
+
             CreateMap<DAL.Model.Servicetype, DTO.ServiceType>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.ServiceTypeId))
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.ServiceTypeName));
@@ -40,7 +43,7 @@ namespace Miritush.Services.DomainProfile
             CreateMap<DAL.Model.Workhour, DTO.WorkHour>();
 
             CreateMap<DAL.Model.Attachment, DTO.Attachment>()
-                .ForMember(x=>x.Id,config => config.MapFrom(x=>x.AttachmentId))
+                .ForMember(x => x.Id, config => config.MapFrom(x => x.AttachmentId))
                 .ForMember(x => x.Name, config => config.MapFrom(x => x.AttachmentName));
 
 

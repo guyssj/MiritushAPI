@@ -24,21 +24,32 @@ namespace Miritush.API.Controllers
             _customerService = customerService;
         }
 
-        // GET: api/<CustomerController>
+        /// <summary>
+        /// Get Customers only admin users
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public Task<List<DTO.Customer>> Get()
         {
             return _customerService.GetCustomersAsync();
         }
 
-        // GET api/<CustomerController>/5
+        /// <summary>
+        /// Get customer by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public Task<DTO.Customer> GetCustomerById(int id)
         {
             return _customerService.GetCustomerByIdAsync(id);
         }
 
-        // GET api/<CustomerController>/0504277550
+        /// <summary>
+        /// Get Customer by phone number admin only
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <returns></returns>
         [HttpGet("phoneNumber")]
         public Task<DTO.Customer> GetCustomerByPhoneNumber([FromQuery] string phoneNumber)
         {
@@ -68,15 +79,15 @@ namespace Miritush.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<DTO.Customer> Update(int id,[FromBody] CustomerData data)
+        public async Task<DTO.Customer> Update(int id, [FromBody] CustomerData data)
         {
-           return await _customerService.UpdateCustomerAsync(
-                data.Id,
-                data.FirstName,
-                data.LastName,
-                data.PhoneNumber,
-                data.Color,
-                data.Notes);
+            return await _customerService.UpdateCustomerAsync(
+                 data.Id,
+                 data.FirstName,
+                 data.LastName,
+                 data.PhoneNumber,
+                 data.Color,
+                 data.Notes);
         }
     }
 }

@@ -13,11 +13,6 @@ using Miritush.DTO.Const;
 using Miritush.DTO.Enums;
 using System.Net.Http;
 using Miritush.Helpers.Exceptions;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
-using Telegram.Bot;
-using System.Threading;
 
 namespace Miritush.Services
 {
@@ -155,6 +150,8 @@ namespace Miritush.Services
                 .Where(cus => cus.PhoneNumber == phoneNumber)
                 .FirstOrDefaultAsync();
 
+
+            // TODO : Add a block and reset the otp after x times
             if (customer.Otp != optCode)
                 throw new UnauthorizedException("Otp is incorect");
             customer.Otp = null;
@@ -163,6 +160,7 @@ namespace Miritush.Services
             return mapper.Map<DTO.Customer>(customer);
 
         }
+
 
         public async Task CreateOtpToCustomer(string phoneNumber)
         {
@@ -180,19 +178,24 @@ namespace Miritush.Services
                 throw new NotFoundException("Customer not found");
 
             customer.Otp = code;
-            await dbContext.SaveChangesAsync();
 
-            (await httpClientFactory
+            //TODO:[GG] add a expired token after X min
+
+            //Todo [GG]:adding block if user try x times
+            httpClientFactory
                 .GetGlobalSmsSenderClient()
                 .WithUri()
                 .WithSender("Miritush")
                 .ToPhoneNumber(phoneNumber)
                 .Message($"זה קוד האימות שלך {code}")
-                .GetAsync())
-                .AssertResultAsync<GlobalSmsResult>();
-
+                .GetAsync().ConfigureAwait(false);
             // if (!smsResults)
             //     throw new Exception("Sms not send");
+
+            await dbContext.SaveChangesAsync();
+
+
+
         }
     }
 }

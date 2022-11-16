@@ -101,6 +101,8 @@ namespace Miritush.Services
             customer.Otp = otp;
             customer.Active = (byte)bypeActive;
 
+            await dbContext.SaveChangesAsync();
+
             return mapper.Map<DTO.Customer>(customer);
         }
 
