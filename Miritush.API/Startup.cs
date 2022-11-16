@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Miritush.API.Extensions;
@@ -24,11 +23,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Miritush.API.Exceptions;
+using System.IO;
 
 namespace Miritush.API
 {
@@ -62,6 +61,8 @@ namespace Miritush.API
              .EnableSensitiveDataLogging()
             .EnableDetailedErrors()
             );
+
+            services.AddMemoryCache();
             services.AddHttpContextAccessor();
             services.AddHttpClient("GlobalSms", c =>
             {
@@ -85,7 +86,6 @@ namespace Miritush.API
                         .Build();
                     config.Filters.Add(new AuthorizeFilter(authorizationPolicy));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Latest)
                 .AddNewtonsoftJson(config =>
                 {
                     // config.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ssZ";
@@ -102,6 +102,10 @@ namespace Miritush.API
                 c.DocumentFilter<ReplaceVersionWithExactValueInPath>();
                 c.OperationFilter<RemoveVersionFromParameter>();
                 c.CustomSchemaIds(type => type.ToString());
+
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
                 c.DocInclusionPredicate((version, desc) =>
                 {
                     if (!desc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
@@ -214,7 +218,6 @@ namespace Miritush.API
             app.UseApiVersioning();
             //app.UseHttpsRedirection();
 
-
             // global error handler
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
@@ -248,6 +251,7 @@ namespace Miritush.API
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IUploadFileService, UploadFileService>();
             services.AddScoped<IAttachmentsService, AttachmentsService>();
+            services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 
         }
