@@ -252,8 +252,7 @@ namespace Miritush.API
             services.AddScoped<IUploadFileService, UploadFileService>();
             services.AddScoped<IAttachmentsService, AttachmentsService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
-
-
+            services.AddScoped<IProductService, ProductService>();
         }
         private void AddAuthServices(IServiceCollection services)
         {

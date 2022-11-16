@@ -59,7 +59,7 @@ namespace Miritush.API.Controllers
 
         [HttpDelete("{productCategoryId}")]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<IActionResult> UpdateCategory(
+        public async Task<IActionResult> DeleteCategory(
             [FromRoute] int productCategoryId,
             CancellationToken cancelToken = default)
         {

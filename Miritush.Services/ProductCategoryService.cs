@@ -30,7 +30,7 @@ namespace Miritush.Services
 
         public async Task<List<DTO.ProductCategory>> GetList(CancellationToken cancelToken = default)
         {
-            var cacheKey = $"LIST_PROCUDES_{userContext.Identity.UserId}";
+            var cacheKey = $"LIST_PROCUDESCATEGORY_{userContext.Identity.UserId}";
 
             return await memoryCache.GetOrCreateAsync(cacheKey, async (entry) =>
             {

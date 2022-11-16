@@ -17,6 +17,8 @@ namespace Miritush.Services.DomainProfile
 
             CreateMap<DAL.Model.ProductCategory, DTO.ProductCategory>();
 
+            CreateMap<DAL.Model.Product, DTO.Product>()
+                .ForMember(x => x.Category, conifg => conifg.MapFrom(x => x.Category));
 
             CreateMap<DAL.Model.Servicetype, DTO.ServiceType>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.ServiceTypeId))

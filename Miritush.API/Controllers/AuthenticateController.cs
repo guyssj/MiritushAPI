@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Miritush.API.Authentication;
 using Miritush.API.Model;
 using Miritush.Services.Abstract;
 using System.Threading.Tasks;
