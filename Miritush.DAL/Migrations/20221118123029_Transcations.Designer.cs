@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Miritush.DAL.Model;
 
 namespace Miritush.DAL.Migrations
 {
     [DbContext(typeof(booksDbContext))]
-    partial class booksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221118123029_Transcations")]
+    partial class Transcations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -31,6 +31,9 @@ namespace Miritush.DAL.Model
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<ProductCategory> ProductCategorys { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<TransactionItem> TransactionItems { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -491,6 +494,91 @@ namespace Miritush.DAL.Model
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.CategoryID)
                     .HasConstraintName("CategoryID_Products");
+
+            });
+
+            modelBuilder.Entity<TransactionItem>(entity =>
+            {
+                entity.ToTable("TransactionItems");
+
+                entity.HasIndex(e => new { e.Id }, "TransactionItemID")
+                    .IsUnique();
+
+                entity.Property(e => e.TranscationId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("TranscationID");
+
+                entity.HasOne(d => d.Transaction)
+                    .WithMany(p => p.TransactionItems)
+                    .HasForeignKey(d => d.TranscationId)
+                    .HasConstraintName("TranscationId_Transcations_TranscationId");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ProductID")
+                    .HasDefaultValueSql(null);
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.TransactionItems)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("ProductId_Product_ProductID");
+
+                entity.Property(e => e.ServiceTypeId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("ServiceTypeID")
+                    .HasDefaultValueSql(null);
+
+                entity.HasOne(d => d.ServiceType)
+                    .WithMany(p => p.TransactionItems)
+                    .HasForeignKey(d => d.ServiceTypeId)
+                    .HasConstraintName("ServiceTypeID_ServiceType_ServiceTypeID");
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Quantity)
+                   .HasColumnType("int(11)")
+                   .HasDefaultValueSql("'0'");
+
+                entity.HasIndex(e => e.TranscationId, "TranscationId_Transcations_TranscationId");
+
+                entity.HasIndex(e => e.ProductId, "ProductId_Product_ProductID");
+
+                entity.HasIndex(e => e.ServiceTypeId, "ServiceTypeID_ServiceType_ServiceTypeID");
+
+            });
+
+
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.ToTable("Transactions");
+
+                entity.HasIndex(e => new { e.Id }, "TransactionID")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("TransactionID");
+
+                entity.Property(e => e.CustomerId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CustomerID");
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("CustomerId_Product_CustomerID");
+
+                entity.HasIndex(e => e.CustomerId, "CustomerId_Product_CustomerID");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Status)
+                    .HasColumnType("tinyint(4)")
+                    .HasDefaultValueSql("'0'");
+
 
             });
             OnModelCreatingPartial(modelBuilder);

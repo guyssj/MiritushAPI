@@ -10,6 +10,7 @@ namespace Miritush.DAL.Model
         public Servicetype()
         {
             Books = new HashSet<Book>();
+            TransactionItems = new HashSet<TransactionItem>();
         }
 
         public int ServiceTypeId { get; set; }
@@ -21,5 +22,7 @@ namespace Miritush.DAL.Model
 
         public virtual Service Service { get; set; }
         public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<TransactionItem> TransactionItems { get; set; }
+
     }
 }
