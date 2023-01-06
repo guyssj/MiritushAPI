@@ -22,8 +22,6 @@ namespace Miritush.API.Controllers
             _lockHoursService = lockHoursService;
             _servicesService = servicesService;
         }
-        [AllowAnonymous]
-
         [HttpGet]
         public async Task<List<DTO.Service>> GetServices()
             => await _servicesService.GetServicesAsync();

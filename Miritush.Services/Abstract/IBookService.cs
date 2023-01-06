@@ -11,6 +11,7 @@ namespace Miritush.Services.Abstract
         Task<Book> GetBookByArrivalToken(Guid arrivalToken);
         Task<List<Book>> GetBooksByCustomerIdAsync(int customerId);
         Task<List<CalendarEvent<Book>>> GetBooksForCalendar();
+        Task<List<CalendarEventApp<Book>>> GetBooksForCalendarApp();
         Task<List<Book>> GetCustomerFutureBooksAsync();
         Task<int> GetMonthBooksCountAsync();
         Task<List<DAL.Model.Book>> GetNextBooks();

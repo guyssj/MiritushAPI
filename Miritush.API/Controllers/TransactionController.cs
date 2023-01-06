@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Miritush.API.Model;
 using Miritush.DTO.Const;
+using Miritush.Services.Abstract;
 
 namespace Miritush.API.Controllers
 {
@@ -14,18 +14,61 @@ namespace Miritush.API.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        public TransactionController()
-        {
+        private readonly ITransactionService transactionService;
 
+        public TransactionController(ITransactionService transactionService)
+        {
+            this.transactionService = transactionService;
         }
 
         [HttpGet]
         [Authorize(Roles = UserRoles.Admin)]
-        public async Task<List<DTO.ProductCategory>> GetProductCategorys(CancellationToken cancelToken = default)
+        public async Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cancelToken = default)
         {
-            return await productCategoryService.GetList(cancelToken);
+            return await transactionService.GetTransactionsAsync(cancelToken);
         }
 
+        [HttpGet("{transactionId:int}")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<DTO.Transaction> GetTransactionAsync(
+            int transactionId,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.GetTransactionAsync(transactionId, cancelToken);
+        }
 
+        [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<DTO.Transaction> CreateTransaction(
+            [FromBody] CreateTransactionData data,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.CreateTransactionAsync(data.CustomerId, cancelToken);
+        }
+        [HttpPost("item")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<DTO.TransactionItem> CreateTransactionItemAsync(
+            [FromBody] CreateTransactionItemData data,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.CreateTransactionItemAsync(
+                data.TranscationId,
+                data.Price,
+                data.Quantity,
+                data.ServiceTypeId,
+                data.ProductId,
+                cancelToken);
+        }
+
+        [HttpGet("{transactionId}/items")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<List<DTO.TransactionItem>> GetTransactionItemsByTransactionIdAsync(
+            int transactionId,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.GetTransactionItemByTransactionIdAsync(
+                transactionId,
+                cancelToken);
+        }
     }
 }

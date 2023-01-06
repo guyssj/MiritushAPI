@@ -118,6 +118,27 @@ namespace Miritush.Services
             return events;
         }
 
+        public async Task<List<DTO.CalendarEventApp<DTO.Book>>> GetBooksForCalendarApp()
+        {
+            var books = await dbContext.Books
+                .Where(x => x.StartDate > DateTime.UtcNow.AddMonths(-3))
+                .Include(cs => cs.Customer)
+                .Include(srvt => srvt.ServiceType)
+                .ToListAsync();
+
+            var bo = books.Select(book => new DTO.CalendarEventApp<DTO.Book>
+            {
+                AllDay = false,
+                Customer = mapper.Map<DTO.Customer>(book.Customer),
+                End = book.StartDate.AddMinutes(book.StartAt + book.Durtion),
+                Meta = mapper.Map<DTO.Book>(book),
+                ServiceType = mapper.Map<DTO.ServiceType>(book.ServiceType),
+                start = book.StartDate.AddMinutes(book.StartAt),
+                Title = $"{book.Customer.FirstName} {book.Customer.LastName} - {book.ServiceType.ServiceTypeName}"
+            });
+            return bo.ToList();
+        }
+
         private async Task<Guid> CreateArrivalToken(Book book)
         {
             book.ArrivalToken = Guid.NewGuid();

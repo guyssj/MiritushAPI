@@ -6,6 +6,7 @@ using Miritush.DAL.Model;
 using Miritush.Services;
 using Miritush.Services.Abstract;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,12 @@ namespace Miritush.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly ITransactionService _transactionService;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, ITransactionService transactionService)
         {
             _customerService = customerService;
+            _transactionService = transactionService;
         }
 
         /// <summary>
@@ -40,9 +43,20 @@ namespace Miritush.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public Task<DTO.Customer> GetCustomerById(int id)
+        public async Task<DTO.Customer> GetCustomerById(int id)
         {
-            return _customerService.GetCustomerByIdAsync(id);
+            return await _customerService.GetCustomerByIdAsync(id);
+        }
+
+        /// <summary>
+        /// Get customer by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/transactions")]
+        public async Task<List<DTO.Transaction>> GetTransactionsByCustomerId(int id, CancellationToken cancelToken = default)
+        {
+            return await _transactionService.GetTransactionsByCustomerIdAsync(id, cancelToken);
         }
 
         /// <summary>

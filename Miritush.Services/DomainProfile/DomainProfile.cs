@@ -17,6 +17,18 @@ namespace Miritush.Services.DomainProfile
 
             CreateMap<DAL.Model.ProductCategory, DTO.ProductCategory>();
 
+
+            CreateMap<DAL.Model.Transaction, DTO.Transaction>()
+                .ForMember(x => x.CustomerName, config => config.MapFrom(x =>
+                    x.Customer != null ? $"{x.Customer.FirstName} {x.Customer.LastName}" : null))
+                .ForMember(x => x.Items, config => config.MapFrom(x => x.TransactionItems));
+
+            CreateMap<DAL.Model.TransactionItem, DTO.TransactionItem>()
+                .ForMember(x => x.ProductName, config => config.MapFrom(x =>
+                    x.Product != null ? x.Product.Name : null))
+                .ForMember(x => x.ServiceTypeName, config => config.MapFrom(x =>
+                    x.ServiceType != null ? x.ServiceType.ServiceTypeName : null));
+
             CreateMap<DAL.Model.Product, DTO.Product>()
                 .ForMember(x => x.Category, conifg => conifg.MapFrom(x => x.Category));
 
@@ -29,6 +41,7 @@ namespace Miritush.Services.DomainProfile
 
             CreateMap<DAL.Model.Book, DTO.Book>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.BookId))
+                .ForMember(x => x.Arrival, config => config.MapFrom(x => x.ArrivalStatus))
                 .ForMember(x => x.Duration, config => config.MapFrom(x => x.Durtion));
 
             CreateMap<DAL.Model.User, DTO.BookIdentity>()

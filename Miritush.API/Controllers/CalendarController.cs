@@ -40,7 +40,7 @@ namespace Miritush.API.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPut("book/update")]
+        [HttpPut("book")]
         public async Task<IActionResult> UpdateBook(UpdateBookData data)
         {
             await bookService.UpdateBookAsync(
@@ -54,7 +54,14 @@ namespace Miritush.API.Controllers
         }
 
         [Authorize(Roles = UserRoles.Admin)]
-        [HttpPost("book/create")]
+        [HttpGet("book")]
+        public async Task<List<CalendarEventApp<Book>>> GetBooks()
+        {
+            return await bookService.GetBooksForCalendarApp();
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpPost("book")]
         public async Task<IActionResult> CreateBook(CreateBookData data)
         {
             await bookService.SetBookAsync(
