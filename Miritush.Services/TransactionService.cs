@@ -23,7 +23,9 @@ namespace Miritush.Services
 
         public async Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cacnelToken = default)
         {
-            var transactions = await dbContext.Transactions.ToListAsync(cacnelToken);
+            var transactions = await dbContext.Transactions
+                .Include(t => t.TransactionItems)
+                .ToListAsync(cacnelToken);
 
             return mapper.Map<List<DTO.Transaction>>(transactions);
         }
@@ -36,12 +38,14 @@ namespace Miritush.Services
         }
         public async Task<DTO.Transaction> CreateTransactionAsync(
             int customerId,
+            int? bookId = null,
             CancellationToken cacnelToken = default)
         {
 
             var transaction = new DAL.Model.Transaction()
             {
                 CustomerId = customerId,
+                BookId = bookId,
                 CreatedDate = DateTime.UtcNow,
                 Status = 0 //NoPay
             };
@@ -73,6 +77,25 @@ namespace Miritush.Services
             return mapper.Map<DTO.TransactionItem>(transactionItem);
         }
 
+        public async Task<List<DTO.TransactionItem>> CreateTransactionItemsAsync(
+            List<DTO.CreateTransactionItemData> items,
+            CancellationToken cacnelToken = default)
+        {
+
+            //change to mapper
+            var transactionItems = items.Select(item => new DAL.Model.TransactionItem()
+            {
+                ProductId = item.ProductId,
+                ServiceTypeId = item.ServiceTypeId,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                TranscationId = item.TransactionId
+            });
+            dbContext.TransactionItems.AddRange(transactionItems);
+            await dbContext.SaveChangesAsync(cacnelToken);
+            return mapper.Map<List<DTO.TransactionItem>>(transactionItems);
+        }
+
         public async Task<List<DTO.TransactionItem>> GetTransactionItemByTransactionIdAsync(
             int transactionId,
             CancellationToken cacnelToken = default)
@@ -100,6 +123,17 @@ namespace Miritush.Services
                 .ToListAsync();
 
             return mapper.Map<List<DTO.Transaction>>(transactions);
+        }
+        public async Task<DTO.Transaction> GetTransactionsByBookIdAsync(
+            int bookId,
+            CancellationToken cacnelToken = default)
+        {
+            var transaction = await dbContext.Transactions
+                .Where(t => t.BookId == bookId)
+                .Include(c => c.Customer)
+                .FirstOrDefaultAsync();
+
+            return mapper.Map<DTO.Transaction>(transaction);
         }
     }
 }

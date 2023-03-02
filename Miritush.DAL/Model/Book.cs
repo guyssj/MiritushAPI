@@ -10,6 +10,7 @@ namespace Miritush.DAL.Model
     {
         public Book()
         {
+            Transactions = new HashSet<Transaction>();
 
         }
         public int BookId { get; set; }
@@ -26,5 +27,7 @@ namespace Miritush.DAL.Model
         public virtual Customer Customer { get; set; }
         public virtual Service Service { get; set; }
         public virtual Servicetype ServiceType { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
+
     }
 }

@@ -565,10 +565,20 @@ namespace Miritush.DAL.Model
                     .HasColumnType("int(11)")
                     .HasColumnName("CustomerID");
 
+                entity.Property(e => e.BookId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("BookID")
+                    .HasDefaultValueSql(null);
+
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("CustomerId_Product_CustomerID");
+
+                entity.HasOne(d => d.Book)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.BookId)
+                    .HasConstraintName("BookId_Product_BookID");
 
                 entity.HasIndex(e => e.CustomerId, "CustomerId_Product_CustomerID");
 

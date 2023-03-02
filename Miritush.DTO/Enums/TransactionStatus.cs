@@ -2,7 +2,7 @@ namespace Miritush.DTO.Enums
 {
     public enum TransactionStatus : byte
     {
-        Pay = 0,
-        NotPay = 1
+        NotPay = 0,
+        Pay = 1
     }
 }

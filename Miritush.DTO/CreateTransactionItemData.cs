@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Miritush.API.Model
+namespace Miritush.DTO
 {
     public class CreateTransactionItemData
     {
         [Required]
-        public int TranscationId { get; set; }
+        public int TransactionId { get; set; }
         public int? ProductId { get; set; }
         public int? ServiceTypeId { get; set; }
         public int Quantity { get; set; }

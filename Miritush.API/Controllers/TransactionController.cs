@@ -43,21 +43,29 @@ namespace Miritush.API.Controllers
             [FromBody] CreateTransactionData data,
             CancellationToken cancelToken = default)
         {
-            return await transactionService.CreateTransactionAsync(data.CustomerId, cancelToken);
+            return await transactionService.CreateTransactionAsync(data.CustomerId, data.BookId, cancelToken);
         }
         [HttpPost("item")]
         [Authorize(Roles = UserRoles.Admin)]
         public async Task<DTO.TransactionItem> CreateTransactionItemAsync(
-            [FromBody] CreateTransactionItemData data,
+            [FromBody] DTO.CreateTransactionItemData data,
             CancellationToken cancelToken = default)
         {
             return await transactionService.CreateTransactionItemAsync(
-                data.TranscationId,
+                data.TransactionId,
                 data.Price,
                 data.Quantity,
                 data.ServiceTypeId,
                 data.ProductId,
                 cancelToken);
+        }
+        [HttpPost("items")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<List<DTO.TransactionItem>> CreateTransactionItemsAsync(
+            [FromBody] List<DTO.CreateTransactionItemData> items,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.CreateTransactionItemsAsync(items, cancelToken);
         }
 
         [HttpGet("{transactionId}/items")]

@@ -6,5 +6,6 @@ namespace Miritush.API.Model
     {
         [Required]
         public int CustomerId { get; set; }
+        public int? BookId { get; set; }
     }
 }

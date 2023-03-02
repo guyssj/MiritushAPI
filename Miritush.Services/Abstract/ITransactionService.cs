@@ -28,6 +28,7 @@ namespace Miritush.Services.Abstract
         /// <returns>new transaction </returns>
         Task<DTO.Transaction> CreateTransactionAsync(
             int customerId,
+            int? bookId = null,
             CancellationToken cacnelToken = default);
         /// <summary>
         /// Create Transaction item to transaction
@@ -64,6 +65,26 @@ namespace Miritush.Services.Abstract
         /// <returns></returns>
         Task<List<DTO.Transaction>> GetTransactionsByCustomerIdAsync(
             int customerId,
+            CancellationToken cacnelToken = default);
+
+        /// <summary>
+        /// add items transactions
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        Task<List<DTO.TransactionItem>> CreateTransactionItemsAsync(
+            List<DTO.CreateTransactionItemData> items,
+            CancellationToken cancelToken);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bookId"></param>
+        /// <param name="cacnelToken"></param>
+        /// <returns></returns>
+        Task<DTO.Transaction> GetTransactionsByBookIdAsync(
+            int bookId,
             CancellationToken cacnelToken = default);
     }
 }

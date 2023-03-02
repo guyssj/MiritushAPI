@@ -17,13 +17,16 @@ namespace Miritush.API.Controllers
     public class CalendarController : ControllerBase
     {
         private readonly ICalendarService _calendarService;
+        private readonly ITransactionService transactionService;
         private readonly IBookService bookService;
 
         public CalendarController(
             ICalendarService calendarService,
+            ITransactionService transactionService,
             IBookService bookService)
         {
             _calendarService = calendarService;
+            this.transactionService = transactionService;
             this.bookService = bookService;
         }
 
@@ -79,6 +82,13 @@ namespace Miritush.API.Controllers
             await bookService.DeleteBook(id);
 
             return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Authorize(Roles = UserRoles.Admin)]
+        [HttpGet("book/{bookId}/transaction")]
+        public async Task<DTO.Transaction> GetTransactionByBookId([FromRoute] int bookId)
+        {
+            return await transactionService.GetTransactionsByBookIdAsync(bookId);
         }
 
         [Authorize(Roles = UserRoles.Admin)]
