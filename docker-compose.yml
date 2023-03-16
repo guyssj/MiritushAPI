@@ -17,8 +17,14 @@ services:
         context: .
         dockerfile: Miritush.API/Dockerfile
     ports:
-      - "8080:80"
+      - "443:443"
     depends_on:
       - db
     environment:
       - ConnectionStrings__BooksDB=server=db;user=bookNail_user;password=guygoldi123$;database=BookNail;port=3306
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=guygoldi
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/miritush.com.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
