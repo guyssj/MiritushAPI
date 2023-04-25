@@ -49,15 +49,41 @@ namespace Miritush.API.Controllers
         }
 
         /// <summary>
-        /// Get customer by Id
+        /// Get transaction for customer id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
         /// <returns></returns>
         [HttpGet("{id}/transactions")]
         public async Task<List<DTO.Transaction>> GetTransactionsByCustomerId(int id, CancellationToken cancelToken = default)
         {
             return await _transactionService.GetTransactionsByCustomerIdAsync(id, cancelToken);
         }
+
+        /// <summary>
+        ///  Get Future books by customer id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/futurebooks")]
+        public async Task<List<DTO.Book>> GetFutureBooks(int id, CancellationToken cancelToken = default)
+        {
+            return await _customerService.GetFutureBooksByCustomerId(id, cancelToken);
+        }
+
+        /// <summary>
+        ///  Get Future books by customer id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/timeline")]
+        public async Task<List<DTO.CustomerTimeline>> GetTimelineAsync(int id, CancellationToken cancelToken = default)
+        {
+            return await _customerService.GetCustomerTimelinesAsync(id, cancelToken);
+        }
+
 
         /// <summary>
         /// Get Customer by phone number admin only

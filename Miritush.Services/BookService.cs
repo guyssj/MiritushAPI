@@ -20,19 +20,22 @@ namespace Miritush.Services
         private readonly IMapper mapper;
         private readonly ISettingsService settingsService;
         private readonly IHttpClientFactory clientFactory;
+        private readonly ICustomerTimelineService customerTimelineService;
 
         public BookService(
             booksDbContext dbContext,
             IUserContextService userContext,
             IMapper mapper,
             ISettingsService settingsService,
-            IHttpClientFactory clientFactory)
+            IHttpClientFactory clientFactory,
+            ICustomerTimelineService customerTimelineService)
         {
             this.dbContext = dbContext;
             this.userContext = userContext;
             this.mapper = mapper;
             this.settingsService = settingsService;
             this.clientFactory = clientFactory;
+            this.customerTimelineService = customerTimelineService;
         }
 
         public async Task<DTO.Book> GetBooksAsync()
@@ -197,7 +200,14 @@ namespace Miritush.Services
                     ArrivalToken = Guid.NewGuid()
                 };
                 dbContext.Books.Add(book);
-                await dbContext.SaveChangesAsync();
+                var timeLineDesc = await serviceTypeQuery
+                    .Select(st => st.ServiceTypeName)
+                    .FirstOrDefaultAsync();
+
+                //save a timeline table
+                await customerTimelineService
+                    .SaveTimeLine(customerId, DTO.Enums.TimelineType.Book, timeLineDesc)
+                    .ConfigureAwait(false);
 
                 if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
                     await SendBookConfirm(book.BookId);
@@ -205,6 +215,7 @@ namespace Miritush.Services
                 if (i == 0)
                     startAt += duration.GetValueOrDefault();
             }
+            await dbContext.SaveChangesAsync();
 
             //push notfication to app
         }

@@ -254,6 +254,7 @@ namespace Miritush.API
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<ICustomerTimelineService, CustomerTimelineService>();
         }
         private void AddAuthServices(IServiceCollection services)
         {

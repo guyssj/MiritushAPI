@@ -56,6 +56,7 @@ namespace Miritush.Services.DomainProfile
 
             CreateMap<DAL.Model.Lockhour, DTO.LockHour>();
             CreateMap<DAL.Model.Workhour, DTO.WorkHour>();
+            CreateMap<DAL.Model.CustomerTimeline, DTO.CustomerTimeline>();
 
             CreateMap<DAL.Model.Attachment, DTO.Attachment>()
                 .ForMember(x => x.Id, config => config.MapFrom(x => x.AttachmentId))

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,33 @@ namespace Miritush.Services
                                             .FirstOrDefaultAsync();
 
             return mapper.Map<DTO.Customer>(customer);
+
+        }
+
+        public async Task<List<DTO.CustomerTimeline>> GetCustomerTimelinesAsync(
+            int customerId,
+            CancellationToken cancelToken)
+        {
+            var customerTimeline = await dbContext.CustomerTimelines
+                .Where(ct => ct.CustomerId == customerId)
+                .ToListAsync(cancelToken);
+
+            return mapper.Map<List<DTO.CustomerTimeline>>(customerTimeline);
+
+        }
+
+        public async Task<List<DTO.Book>> GetFutureBooksByCustomerId(
+            int customerId,
+            CancellationToken cancelToken = default)
+        {
+            if (customerId <= 0)
+                throw new ArgumentNullException(nameof(customerId));
+
+            var futureBooks = await dbContext.Books
+                .Where(b => b.CustomerId == customerId && b.StartDate.Date.AddMinutes(b.StartAt) >= DateTime.UtcNow.Date)
+                .ToListAsync(cancelToken);
+
+            return mapper.Map<List<DTO.Book>>(futureBooks);
 
         }
         public async Task<DTO.Customer> CreateCustomer(string firstName,

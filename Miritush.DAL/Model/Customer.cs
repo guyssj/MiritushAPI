@@ -12,6 +12,7 @@ namespace Miritush.DAL.Model
             Books = new HashSet<Book>();
             Attachments = new HashSet<Attachment>();
             Transactions = new HashSet<Transaction>();
+            CustomerTimelines = new HashSet<CustomerTimeline>();
         }
 
         public int CustomerId { get; set; }
@@ -26,6 +27,7 @@ namespace Miritush.DAL.Model
         public virtual ICollection<Book> Books { get; set; }
         public virtual ICollection<Attachment> Attachments { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<CustomerTimeline> CustomerTimelines { get; set; }
 
 
     }

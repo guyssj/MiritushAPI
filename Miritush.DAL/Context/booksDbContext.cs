@@ -33,6 +33,7 @@ namespace Miritush.DAL.Model
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<TransactionItem> TransactionItems { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<CustomerTimeline> CustomerTimelines { get; set; }
 
 
 
@@ -589,6 +590,48 @@ namespace Miritush.DAL.Model
                     .HasColumnType("tinyint(4)")
                     .HasDefaultValueSql("'0'");
 
+
+            });
+
+            modelBuilder.Entity<CustomerTimeline>(entity =>
+            {
+                entity.ToTable("CustomerTimelines");
+
+                entity.HasIndex(e => new { e.Id }, "CustomerTimelineID")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CustomerTimelineID");
+
+                entity.Property(e => e.CustomerId)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("CustomerID");
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("varchar(1000)")
+                    .HasColumnName("Description")
+                    .HasDefaultValueSql(null);
+
+                entity.Property(e => e.Type)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("Type")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Notes)
+                    .HasColumnType("varchar(1000)")
+                    .HasColumnName("Notes")
+                    .HasDefaultValueSql(null);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.CustomerTimelines)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("CustomerId_CustomerTimelines_CustomerID");
+
+                entity.HasIndex(e => e.CustomerId, "CustomerId_IDX_CustomerID");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime");
 
             });
             OnModelCreatingPartial(modelBuilder);
