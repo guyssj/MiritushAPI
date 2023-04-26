@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miritush.DTO", "Miritush.DT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Helpers", "Miritush.Helpers\Miritush.Helpers.csproj", "{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miritush.Socket", "Miritush.Socket\Miritush.Socket.csproj", "{345EDBBB-0A40-485C-B9E1-B20D63FADF3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79D292B9-81A5-4C91-8CAC-175E15B2A5AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{345EDBBB-0A40-485C-B9E1-B20D63FADF3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345EDBBB-0A40-485C-B9E1-B20D63FADF3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345EDBBB-0A40-485C-B9E1-B20D63FADF3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345EDBBB-0A40-485C-B9E1-B20D63FADF3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
