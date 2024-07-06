@@ -214,7 +214,11 @@ namespace Miritush.Services
 
                 if (i == 0)
                     startAt += duration.GetValueOrDefault();
+
+
             }
+            await SendSocketNotification();
+
             await dbContext.SaveChangesAsync();
 
             //push notfication to app
@@ -366,6 +370,22 @@ namespace Miritush.Services
             return mapper.Map<List<DTO.Book>>(RemainderBooks);
         }
 
+
+        private async Task SendSocketNotification()
+        {
+            var payload = new
+            {
+                GroupName = "BOOK_STATE",
+                ObjectId = 1
+            };
+
+            var result = await (await clientFactory
+                .GetSocketAPISenderClient()
+                .WithUri()
+                .WithMethod("notifications")
+                .PostAsync(payload))
+                .AssertResultAsync<object>();
+        }
         private async Task<bool> SendBookConfirm(int bookId)
         {
             var newBook = await dbContext.Books

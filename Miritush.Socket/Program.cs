@@ -19,7 +19,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(x => x
+    .WithOrigins("http://localhost:3000")
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .AllowAnyHeader()
+    .WithExposedHeaders("Content-Disposition"));
 app.UseAuthorization();
 app.MapHub<MiritushHubs>("/miritushHubs");
 

@@ -51,12 +51,9 @@ namespace Miritush.API
             });
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
 
-            // Replace 'YourDbContext' with the name of your own DbContext derived class.
             services.AddDbContext<booksDbContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(configuration.GetConnectionString("BooksDB"), serverVersion)
-             // // The following three options help with debugging, but should
-             // // be changed or removed for production.
              .LogTo(Console.WriteLine, LogLevel.Information)
              .EnableSensitiveDataLogging()
             .EnableDetailedErrors()
@@ -76,6 +73,13 @@ namespace Miritush.API
                 c.BaseAddress = new Uri(BaseWithQuery);
             });
 
+            services.AddHttpClient("SocketAPI", c =>
+            {
+                var socketAPIBaseUrl = configuration.GetValue<string>("SocketAPI:BaseUrl");
+                var ApiKey = configuration.GetValue<string>("SocketAPI:ApiKey");
+                c.BaseAddress = new Uri(socketAPIBaseUrl);
+            });
+
 
             services
                 .AddControllers(config =>
@@ -88,7 +92,6 @@ namespace Miritush.API
                 })
                 .AddNewtonsoftJson(config =>
                 {
-                    // config.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ssZ";
                     config.SerializerSettings.Converters.Add(new StringEnumConverter());
                     config.UseCamelCasing(true);
                 })
@@ -168,8 +171,6 @@ namespace Miritush.API
             });
             AddCoreServices(services);
             AddAuthServices(services);
-
-
         }
 
 

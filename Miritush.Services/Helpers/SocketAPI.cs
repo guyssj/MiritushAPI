@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Miritush.Services.Helpers
 {
-    public class GlobalSmsHttpClient
+    public class SocketAPIHttpClient
     {
-        private readonly string clientName = "GlobalSms";
+        private readonly string clientName = "SocketAPI";
         private readonly IHttpClientFactory clientFactory;
 
-        public GlobalSmsHttpClient(IHttpClientFactory clientFactory)
+        public SocketAPIHttpClient(IHttpClientFactory clientFactory)
         {
             this.clientFactory = clientFactory;
         }
 
-        public GlobalSmsHttpRequest WithUri()
+        public SocketAPIHttpRequest WithUri()
         {
             var client = this.clientFactory.CreateClient(this.clientName);
 
@@ -28,17 +28,17 @@ namespace Miritush.Services.Helpers
                 RequestUri = new Uri($"{client.BaseAddress}"),
             };
 
-            return new GlobalSmsHttpRequest(client, request);
+            return new SocketAPIHttpRequest(client, request);
         }
     }
 
-    public class GlobalSmsHttpRequest
+    public class SocketAPIHttpRequest
     {
         private readonly HttpClient httpClient;
         private readonly HttpRequestMessage request;
         private HttpResponseMessage response;
 
-        public GlobalSmsHttpRequest(
+        public SocketAPIHttpRequest(
             HttpClient httpClient,
             HttpRequestMessage message)
         {
@@ -46,40 +46,15 @@ namespace Miritush.Services.Helpers
             this.request = message;
         }
 
-        public GlobalSmsHttpRequest WithHeader(string name, string value)
+        public SocketAPIHttpRequest WithHeader(string name, string value)
         {
             request.Headers.Add(name, value);
             return this;
         }
-        public GlobalSmsHttpRequest Message(string message)
+        public SocketAPIHttpRequest WithMethod(string methodName)
         {
-            var uriWithQuery = QueryHelpersCustom.AddQueryString(
-                request.RequestUri.OriginalString,
-                "txtSMSmessage",
-                message);
 
-            request.RequestUri = new Uri(uriWithQuery);
-            return this;
-        }
-
-        public GlobalSmsHttpRequest WithSender(string senderName)
-        {
-            var uriWithQuery = QueryHelpersCustom.AddQueryString(
-                request.RequestUri.OriginalString,
-                "txtOriginator",
-                senderName);
-
-            request.RequestUri = new Uri(uriWithQuery);
-            return this;
-        }
-        public GlobalSmsHttpRequest ToPhoneNumber(string phoneNumber)
-        {
-            var uriWithQuery = QueryHelpersCustom.AddQueryString(
-                request.RequestUri.OriginalString,
-                "destinations",
-                phoneNumber);
-
-            request.RequestUri = new Uri(uriWithQuery);
+            request.RequestUri = new Uri($"{httpClient.BaseAddress}{methodName}");
             return this;
         }
 
@@ -115,4 +90,5 @@ namespace Miritush.Services.Helpers
             return this.response;
         }
     }
+
 }
