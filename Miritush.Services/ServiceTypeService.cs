@@ -24,19 +24,24 @@ namespace Miritush.Services
 
         public async Task<List<DTO.ServiceType>> List()
         {
-            var serviceTypes = await dbContext.Servicetypes.ToListAsync();
+            var serviceTypes = await dbContext.Servicetypes
+                .AsNoTracking()
+                .ToListAsync();
 
             return mapper.Map<List<DTO.ServiceType>>(serviceTypes);
         }
         public async Task<DTO.ServiceType> Get(int id)
         {
-            var serviceType = await dbContext.Servicetypes.FindAsync(id);
+            var serviceType = await dbContext.Servicetypes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(st => st.ServiceTypeId == id);
 
             return mapper.Map<DTO.ServiceType>(serviceType);
         }
         public async Task<List<DTO.ServiceType>> GetByService(int serviceId)
         {
             var serviceTypes = await dbContext.Servicetypes
+                .AsNoTracking()
                 .Where(x => x.ServiceId == serviceId)
                 .ToListAsync();
             return mapper.Map<List<DTO.ServiceType>>(serviceTypes);

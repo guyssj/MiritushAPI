@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -27,13 +27,48 @@ namespace Miritush.Services
 
         public async Task<List<DTO.Customer>> GetCustomersAsync()
         {
-            var customers = await dbContext.Customers.ToListAsync();
+            var customers = await dbContext.Customers
+                .AsNoTracking()
+                .ToListAsync();
             return mapper.Map<List<DTO.Customer>>(customers);
+        }
+
+        public async Task<ListResult<DTO.Customer>> GetCustomersPagedAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancelToken = default)
+        {
+            if (pageNumber <= 0)
+                pageNumber = 1;
+
+            if (pageSize <= 0)
+                pageSize = 50;
+
+            var query = dbContext.Customers
+                .AsNoTracking()
+                .OrderBy(c => c.CustomerId);
+
+            var totalRecords = await query.CountAsync(cancelToken);
+
+            var customers = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancelToken);
+
+            var result = new ListResult<DTO.Customer>(pageNumber, pageSize)
+            {
+                TotalRecord = totalRecords,
+                Data = mapper.Map<List<DTO.Customer>>(customers)
+            };
+
+            return result;
         }
 
         public async Task<DTO.Customer> GetCustomerByIdAsync(int id)
         {
-            var customer = await dbContext.Customers.FindAsync(id);
+            var customer = await dbContext.Customers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.CustomerId == id);
             return mapper.Map<DTO.Customer>(customer);
         }
         public async Task<DTO.Customer> GetCustomerByPhoneNumberAsync(string phoneNumber)
@@ -41,8 +76,9 @@ namespace Miritush.Services
             if (phoneNumber == null)
                 throw new ArgumentNullException(nameof(phoneNumber));
 
-            var customer = await dbContext.Customers.Where(x => x.PhoneNumber == phoneNumber)
-                                            .FirstOrDefaultAsync();
+            var customer = await dbContext.Customers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
 
             return mapper.Map<DTO.Customer>(customer);
 
@@ -53,6 +89,7 @@ namespace Miritush.Services
             CancellationToken cancelToken)
         {
             var customerTimeline = await dbContext.CustomerTimelines
+                .AsNoTracking()
                 .Where(ct => ct.CustomerId == customerId)
                 .ToListAsync(cancelToken);
 
@@ -68,6 +105,7 @@ namespace Miritush.Services
                 throw new ArgumentNullException(nameof(customerId));
 
             var futureBooks = await dbContext.Books
+                .AsNoTracking()
                 .Where(b => b.CustomerId == customerId && b.StartDate.Date.AddMinutes(b.StartAt) >= DateTime.UtcNow.Date)
                 .ToListAsync(cancelToken);
 

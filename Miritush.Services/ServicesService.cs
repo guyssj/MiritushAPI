@@ -24,7 +24,9 @@ namespace Miritush.Services
         }
         public async Task<List<DTO.Service>> GetServicesAsync()
         {
-            var services = await dbContext.Services.ToListAsync();
+            var services = await dbContext.Services
+                .AsNoTracking()
+                .ToListAsync();
 
             return mapper.Map<List<DTO.Service>>(services);
         }
@@ -42,7 +44,9 @@ namespace Miritush.Services
         }
         public async Task<DTO.Service> GetServiceById(int id)
         {
-            var service = await dbContext.Services.FindAsync(id);
+            var service = await dbContext.Services
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.ServiceId == id);
 
             return mapper.Map<DTO.Service>(service);
         }

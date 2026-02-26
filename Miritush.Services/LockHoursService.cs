@@ -28,6 +28,7 @@ namespace Miritush.Services
         public async Task<List<CalendarEvent<LockHour>>> List()
         {
             var lockHours = await dbContext.Lockhours
+                .AsNoTracking()
                 .Where(x => x.StartDate > DateTime.UtcNow.AddMonths(-3))
                 .ToListAsync();
 
@@ -42,6 +43,7 @@ namespace Miritush.Services
         public async Task<List<DTO.LockHour>> GetByDate(DateTime startDate)
         {
             var lockHours = await dbContext.Lockhours
+                .AsNoTracking()
                 .Where(x => x.StartDate.Date == startDate.Date)
                 .ToListAsync();
 
@@ -87,6 +89,7 @@ namespace Miritush.Services
         {
             var slots = new List<int>();
             var lockHours = await dbContext.Lockhours
+                .AsNoTracking()
                 .Where(x => x.StartDate.Date == date.Date)
                 .ToListAsync();
 

@@ -1,4 +1,5 @@
 using Miritush.DAL.Model;
+using Miritush.DTO;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,10 @@ namespace Miritush.Services.Abstract
     public interface ICustomerService
     {
         Task<List<DTO.Customer>> GetCustomersAsync();
+        Task<ListResult<DTO.Customer>> GetCustomersPagedAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cancelToken = default);
         Task<DTO.Customer> CreateCustomer(string firstName,
                                                   string lastName,
                                                   string phoneNumber,

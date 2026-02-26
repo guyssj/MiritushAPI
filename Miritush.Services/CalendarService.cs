@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
@@ -58,6 +58,7 @@ namespace Miritush.Services
                 throw new Exception("not auth");
 
             var holidays = await dbContext.Holidays
+                .AsNoTracking()
                 .Where(h => h.Date >= DateTime.UtcNow.Date)
                 .ToListAsync();
 
@@ -89,9 +90,9 @@ namespace Miritush.Services
             int pageNumber = 1,
             int pageSize = 20)
         {
-            var date = DateTime.UtcNow.AddDays(31);
+            var date = startDate.AddDays(31);
             var listFreeSlots = new List<FreeSlots>();
-            var endDate = new DateTime(date.Year, date.Month, startDate.Day);
+            var endDate = date.Date;
 
             foreach (var day in EachDay(startDate, endDate))
             {
@@ -145,6 +146,7 @@ namespace Miritush.Services
         private async Task<List<DTO.CloseDay>> GetCloseDaysAsync()
         {
             var closeDays = await dbContext.Closedays
+                .AsNoTracking()
                 .Where(c => c.Date >= DateTime.UtcNow.Date)
                 .ToListAsync();
             return mapper.Map<List<CloseDay>>(closeDays);

@@ -35,14 +35,18 @@ namespace Miritush.Services
             return await memoryCache.GetOrCreateAsync(cacheKey, async (entry) =>
             {
                 entry.AbsoluteExpirationRelativeToNow = System.TimeSpan.FromMinutes(5);
-                var listProductCategory = await dbContext.ProductCategorys.ToListAsync(cancelToken);
+                var listProductCategory = await dbContext.ProductCategorys
+                    .AsNoTracking()
+                    .ToListAsync(cancelToken);
                 return mapper.Map<List<DTO.ProductCategory>>(listProductCategory);
             });
 
         }
         public async Task<DTO.ProductCategory> GetById(int id, CancellationToken cancelToken = default)
         {
-            var productCategory = await dbContext.ProductCategorys.FindAsync(id);
+            var productCategory = await dbContext.ProductCategorys
+                .AsNoTracking()
+                .FirstOrDefaultAsync(pc => pc.Id == id, cancelToken);
             return mapper.Map<DTO.ProductCategory>(productCategory);
         }
         public async Task<DTO.ProductCategory> CreateCategory(string name, CancellationToken cancelToken = default)

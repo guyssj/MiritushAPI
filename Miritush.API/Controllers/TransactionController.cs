@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Model;
+using Miritush.DTO;
 using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
 
@@ -26,6 +27,16 @@ namespace Miritush.API.Controllers
         public async Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cancelToken = default)
         {
             return await transactionService.GetTransactionsAsync(cancelToken);
+        }
+
+        [HttpGet("paged")]
+        [Authorize(Roles = UserRoles.Admin)]
+        public async Task<ListResult<DTO.Transaction>> GetTransactionsPagedAsync(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 50,
+            CancellationToken cancelToken = default)
+        {
+            return await transactionService.GetTransactionsPagedAsync(pageNumber, pageSize, cancelToken);
         }
 
         [HttpGet("{transactionId:int}")]
