@@ -6,6 +6,7 @@ using Miritush.API.Model;
 using Miritush.DTO;
 using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -58,9 +59,9 @@ namespace Miritush.API.Controllers
 
         [Authorize(Roles = UserRoles.Admin)]
         [HttpGet("book")]
-        public async Task<List<CalendarEventApp<Book>>> GetBooks()
+        public async Task<List<CalendarEventApp<Book>>> GetBooks(DateTime? startDate)
         {
-            return await bookService.GetBooksForCalendarApp();
+            return await bookService.GetBooksForCalendarApp(startDate);
         }
 
         [Authorize(Roles = UserRoles.Admin)]
@@ -105,8 +106,8 @@ namespace Miritush.API.Controllers
             => await _calendarService.GetFreeDaysAsync(
                 data.startDate,
                 data.duration.GetValueOrDefault(),
-                data.pageNumber,
-                data.pageSize);
+                data.PageNummber,
+                data.PageSize);
 
         [AllowAnonymous]
         [HttpGet("closeDays/updateHolidays")]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Attributes;
 using Miritush.API.Model;
 using Miritush.DAL.Model;
+using Miritush.DTO;
 using Miritush.Services;
 using Miritush.Services.Abstract;
 using System.Collections.Generic;
@@ -94,6 +95,38 @@ namespace Miritush.API.Controllers
         public Task<DTO.Customer> GetCustomerByPhoneNumber([FromQuery] string phoneNumber)
         {
             return _customerService.GetCustomerByPhoneNumberAsync(phoneNumber);
+        }
+
+
+        /// <summary>
+        /// Retrieves a paginated list of customers that match the specified search criteria.
+        /// </summary>
+        /// <param name="searchTerm">The term to search for in customer data (e.g., name, email). If null or empty, all customers are returned.</param>
+        /// <param name="pageSize">The number of results to return per page. Defaults to 20.</param>
+        /// <param name="pageNumber">The page number to retrieve. Defaults to 1.</param>
+        /// <param name="sortBy">The field by which to sort the results (e.g., "FirstName", "LastName"). Defaults to "FirstName".</param>
+        /// <param name="ascending">Indicates whether the sorting should be in ascending order. Defaults to true.</param>
+        /// <returns>
+        /// A task that returns a ListResult containing a list of customers that match the criteria.
+        /// </returns>
+        /// <response code="200">Returns the list of matching customers.</response>
+        /// <response code="400">If the input parameters are invalid.</response>
+        [HttpGet("search")]
+        [ProducesResponseType(typeof(ListResult<DTO.Customer>), 200)]
+        [ProducesResponseType(400)]
+        public Task<ListResult<DTO.Customer>> Search(
+            [FromQuery] string searchTerm = null,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] string sortBy = "FirstName",
+            [FromQuery] bool ascending = true)
+        {
+            return _customerService.SearchCustomersAsync(
+                searchTerm,
+                pageNumber,
+                pageSize,
+                sortBy,
+                ascending);
         }
 
         // POST api/<CustomerController>

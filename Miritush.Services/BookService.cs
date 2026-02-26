@@ -121,10 +121,12 @@ namespace Miritush.Services
             return events;
         }
 
-        public async Task<List<DTO.CalendarEventApp<DTO.Book>>> GetBooksForCalendarApp()
+        public async Task<List<DTO.CalendarEventApp<DTO.Book>>> GetBooksForCalendarApp(DateTime? startDate)
         {
+            if (startDate == null)
+                startDate = DateTime.UtcNow.AddDays(-3);
             var books = await dbContext.Books
-                .Where(x => x.StartDate > DateTime.UtcNow.AddMonths(-3))
+                .Where(x => x.StartDate > startDate)
                 .Include(cs => cs.Customer)
                 .Include(srvt => srvt.ServiceType)
                 .ToListAsync();
@@ -210,10 +212,10 @@ namespace Miritush.Services
                     .ConfigureAwait(false);
 
                 if (await settingsService.GetValue(SettingsNames.SEND_SMS_APP) == "1")
-                    await SendBookConfirm(book.BookId);
+                    //await SendBookConfirm(book.BookId);
 
-                if (i == 0)
-                    startAt += duration.GetValueOrDefault();
+                    if (i == 0)
+                        startAt += duration.GetValueOrDefault();
 
 
             }
@@ -378,13 +380,11 @@ namespace Miritush.Services
                 GroupName = "BOOK_STATE",
                 ObjectId = 1
             };
-
-            var result = await (await clientFactory
+            _ = await clientFactory
                 .GetSocketAPISenderClient()
                 .WithUri()
                 .WithMethod("notifications")
-                .PostAsync(payload))
-                .AssertResultAsync<object>();
+                .PostAsync(payload);
         }
         private async Task<bool> SendBookConfirm(int bookId)
         {

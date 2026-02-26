@@ -10,13 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Miritush.API.Extensions;
 using Miritush.DAL.Model;
 using Miritush.Services;
 using Miritush.Services.Abstract;
 using Miritush.Services.DomainProfile;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +26,9 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Miritush.API.Exceptions;
 using System.IO;
+using Miritush.DTO;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Miritush.API
 {
@@ -50,7 +51,8 @@ namespace Miritush.API
                 options.DefaultApiVersion = new ApiVersion(1, 0);
             });
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 34));
-
+            services.AddOptions<MailSettings>()
+                .Bind(configuration.GetSection("MailSettings"));
             services.AddDbContext<booksDbContext>(
                 dbContextOptions => dbContextOptions
                     .UseMySql(configuration.GetConnectionString("BooksDB"), serverVersion)
@@ -256,6 +258,7 @@ namespace Miritush.API
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICustomerTimelineService, CustomerTimelineService>();
+            services.AddScoped<IMailService, MailService>();
         }
         private void AddAuthServices(IServiceCollection services)
         {

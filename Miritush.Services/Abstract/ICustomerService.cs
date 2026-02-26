@@ -45,5 +45,24 @@ namespace Miritush.Services.Abstract
         Task<List<DTO.CustomerTimeline>> GetCustomerTimelinesAsync(
             int customerId,
             CancellationToken cancelToken);
+
+        /// <summary>
+        /// Asynchronously searches for customers based on a search term, with support for pagination and sorting.
+        /// </summary>
+        /// <param name="searchTerm">The term to search for in customer data (e.g., name, email). If null or empty, returns all customers.</param>
+        /// <param name="page">The page number of the results to retrieve. Defaults to 1.</param>
+        /// <param name="pageSize">The number of customers to return per page. Defaults to 10.</param>
+        /// <param name="sortBy">The field name to sort the results by (e.g., "FirstName", "LastName"). Defaults to "FirstName".</param>
+        /// <param name="ascending">Whether to sort the results in ascending order. If false, results are sorted in descending order. Defaults to true.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation. 
+        /// The task result contains a <see cref="DTO.ListResult{DTO.Customer}"/> object with a paginated list of customers that match the search criteria.
+        /// </returns>
+        Task<DTO.ListResult<DTO.Customer>> SearchCustomersAsync(
+            string searchTerm = null,
+            int page = 1,
+            int pageSize = 10,
+            string sortBy = "FirstName",
+            bool ascending = true);
     }
 }

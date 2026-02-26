@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
+using Miritush.DTO;
 using Miritush.Services.Abstract;
 
 namespace Miritush.Services
@@ -142,6 +144,55 @@ namespace Miritush.Services
             return await dbContext.SaveChangesAsync();
 
         }
+
+        // Search customers by a single term across all fields with pagination and async
+        public async Task<ListResult<DTO.Customer>> SearchCustomersAsync(
+            string searchTerm = null,
+            int page = 1,
+            int pageSize = 10,
+            string sortBy = "FirstName",
+            bool ascending = true)
+        {
+            var query = dbContext.Customers.AsQueryable();
+
+            // Apply search filter
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                var lowerSearchTerm = searchTerm.ToLower();
+                query = query.Where(c =>
+                    c.FirstName.ToLower().Contains(lowerSearchTerm) ||
+                    c.LastName.ToLower().Contains(lowerSearchTerm) ||
+                    c.PhoneNumber.Contains(searchTerm));
+            }
+
+            // Filter only active customers
+            query = query.Where(c => c.Active == 1);
+
+            // Get total count for pagination
+            var totalCount = await query.CountAsync();
+
+            // Apply sorting
+            query = sortBy.ToLower() switch
+            {
+                "lastname" => ascending ? query.OrderBy(c => c.LastName) : query.OrderByDescending(c => c.LastName),
+                "phonenumber" => ascending ? query.OrderBy(c => c.PhoneNumber) : query.OrderByDescending(c => c.PhoneNumber),
+                "customerid" => ascending ? query.OrderBy(c => c.CustomerId) : query.OrderByDescending(c => c.CustomerId),
+                _ => ascending ? query.OrderBy(c => c.FirstName) : query.OrderByDescending(c => c.FirstName)
+            };
+
+            // Apply pagination
+            var customers = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ProjectTo<DTO.Customer>(mapper.ConfigurationProvider)
+                .ToListAsync();
+            return new ListResult<DTO.Customer>(page, pageSize)
+            {
+                Data = customers,
+                TotalRecord = totalCount,
+            };
+        }
+
 
     }
 }

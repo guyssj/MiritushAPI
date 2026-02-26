@@ -20,9 +20,18 @@ namespace Miritush.Socket.Controllers
         [HttpPost]
         public async Task<IActionResult> SendNotification([FromBody] PayloadNotification payload, CancellationToken cancelToken)
         {
-            var messagePayLoad = JsonSerializer.Serialize(payload);
-            await hubContext.Clients.All.BookChange(messagePayLoad);
-            return Ok();
+            try
+            {
+                var messagePayLoad = JsonSerializer.Serialize(payload);
+                await hubContext.Clients.All.BookChange(messagePayLoad);
+                return Ok();
+            }
+            catch (System.Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
 
     }
