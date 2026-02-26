@@ -38,6 +38,7 @@ namespace Miritush.Services
             {
                 entry.AbsoluteExpirationRelativeToNow = System.TimeSpan.FromMinutes(5);
                 var listProductCategory = await dbContext.Products
+                    .AsNoTracking()
                     .Include(p => p.Category)
                     .ToListAsync(cancelToken);
                 return mapper.Map<List<DTO.Product>>(listProductCategory);
@@ -46,7 +47,9 @@ namespace Miritush.Services
         }
         public async Task<DTO.Product> GetById(int id, CancellationToken cancelToken = default)
         {
-            var product = await dbContext.Products.FindAsync(id);
+            var product = await dbContext.Products
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id, cancelToken);
             return mapper.Map<DTO.Product>(product);
         }
         public async Task<DTO.Product> CreateProduct(

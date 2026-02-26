@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.Services.Abstract;
@@ -40,7 +40,9 @@ namespace Miritush.Services
 
         public async Task<DTO.User> GetAsync(int id)
         {
-            var user = await dbContext.Users.FindAsync(id);
+            var user = await dbContext.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
                 throw new NotFoundException("User not found");
@@ -97,8 +99,8 @@ namespace Miritush.Services
                 throw new ArgumentNullException(nameof(userName));
 
             var user = await dbContext.Users
-                .Where(x => x.UserName == userName)
-                .FirstOrDefaultAsync();
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserName == userName);
 
             if (user == null)
                 throw new UnauthorizedException("user not exsit");

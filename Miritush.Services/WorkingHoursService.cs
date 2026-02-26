@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.DTO;
@@ -24,13 +24,17 @@ namespace Miritush.Services
 
         public async Task<List<WorkHour>> ListAsync()
         {
-            var workingHours = await dbContext.Workhours.ToListAsync();
+            var workingHours = await dbContext.Workhours
+                .AsNoTracking()
+                .ToListAsync();
 
             return mapper.Map<List<WorkHour>>(workingHours);
         }
         public async Task<WorkHour> GetWorkHourByDateAsync(int dayofWeek)
         {
-            var workHour = await dbContext.Workhours.FindAsync(dayofWeek);
+            var workHour = await dbContext.Workhours
+                .AsNoTracking()
+                .FirstOrDefaultAsync(wh => wh.DayOfWeek == dayofWeek);
 
             return mapper.Map<WorkHour>(workHour);
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Miritush.Helpers.Exceptions;
@@ -22,6 +22,7 @@ namespace Miritush.API.Extensions
             var mapper = context.RequestServices.GetRequiredService<AutoMapper.IMapper>();
 
             var user = await dbcontext.Users
+               .AsNoTracking()
                .Where(user => user.UserName == username)
                .FirstOrDefaultAsync();
 
@@ -29,6 +30,7 @@ namespace Miritush.API.Extensions
             if (user == null)
             {
                 customer = await dbcontext.Customers
+                    .AsNoTracking()
                     .Where(customer => customer.PhoneNumber == username)
                     .FirstOrDefaultAsync();
                 if (customer == null)

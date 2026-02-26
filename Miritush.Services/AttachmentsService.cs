@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.Services.Abstract;
 using System;
@@ -20,12 +20,16 @@ namespace Miritush.Services
 
         public async Task<List<Attachment>> GetAttachmentsAsync()
         {
-            return await dbContext.Attachments.ToListAsync();
+            return await dbContext.Attachments
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Attachment> GetAttachmentByIdAsync(int id)
         {
-            return await dbContext.Attachments.FindAsync(id);
+            return await dbContext.Attachments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.AttachmentId == id);
         }
         public async Task AddAttachmentAsync(string attachmentName,string mimetype,int customerId)
         {
@@ -53,6 +57,7 @@ namespace Miritush.Services
         public async Task<List<Attachment>> GetAttachmentsByCustomerIdAsync(int customerId)
         {
             return await dbContext.Attachments
+                .AsNoTracking()
                 .Where(att => att.CustomerId == customerId)
                 .ToListAsync();
         }

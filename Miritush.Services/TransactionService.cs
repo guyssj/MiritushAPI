@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
+using Miritush.DTO;
 using Miritush.Services.Abstract;
 
 namespace Miritush.Services
@@ -24,15 +25,50 @@ namespace Miritush.Services
         public async Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cacnelToken = default)
         {
             var transactions = await dbContext.Transactions
+                .AsNoTracking()
                 .Include(t => t.TransactionItems)
                 .ToListAsync(cacnelToken);
 
             return mapper.Map<List<DTO.Transaction>>(transactions);
         }
 
+        public async Task<ListResult<DTO.Transaction>> GetTransactionsPagedAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cacnelToken = default)
+        {
+            if (pageNumber <= 0)
+                pageNumber = 1;
+
+            if (pageSize <= 0)
+                pageSize = 50;
+
+            var query = dbContext.Transactions
+                .AsNoTracking()
+                .OrderByDescending(t => t.CreatedDate);
+
+            var totalRecords = await query.CountAsync(cacnelToken);
+
+            var transactions = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Include(t => t.TransactionItems)
+                .ToListAsync(cacnelToken);
+
+            var result = new ListResult<DTO.Transaction>(pageNumber, pageSize)
+            {
+                TotalRecord = totalRecords,
+                Data = mapper.Map<List<DTO.Transaction>>(transactions)
+            };
+
+            return result;
+        }
+
         public async Task<DTO.Transaction> GetTransactionAsync(int id, CancellationToken cacnelToken = default)
         {
-            var transaction = await dbContext.Transactions.FindAsync(id, cacnelToken);
+            var transaction = await dbContext.Transactions
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == id, cacnelToken);
 
             return mapper.Map<DTO.Transaction>(transaction);
         }
@@ -101,10 +137,11 @@ namespace Miritush.Services
             CancellationToken cacnelToken = default)
         {
             var transactionItems = await dbContext.TransactionItems
+                .AsNoTracking()
                 .Include(t => t.ServiceType)
                 .Include(t => t.Product)
                 .Where(t => t.TranscationId == transactionId)
-                .ToListAsync();
+                .ToListAsync(cacnelToken);
 
             return mapper.Map<List<DTO.TransactionItem>>(transactionItems);
         }
@@ -114,13 +151,14 @@ namespace Miritush.Services
             CancellationToken cacnelToken = default)
         {
             var transactions = await dbContext.Transactions
+                .AsNoTracking()
                 .Where(t => t.CustomerId == customerId)
                 .Include(c => c.Customer)
                 .Include(t => t.TransactionItems)
                     .ThenInclude(ti => ti.Product)
                 .Include(t => t.TransactionItems)
                     .ThenInclude(ti => ti.ServiceType)
-                .ToListAsync();
+                .ToListAsync(cacnelToken);
 
             return mapper.Map<List<DTO.Transaction>>(transactions);
         }
@@ -129,9 +167,10 @@ namespace Miritush.Services
             CancellationToken cacnelToken = default)
         {
             var transaction = await dbContext.Transactions
+                .AsNoTracking()
                 .Where(t => t.BookId == bookId)
                 .Include(c => c.Customer)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(cacnelToken);
 
             return mapper.Map<DTO.Transaction>(transaction);
         }

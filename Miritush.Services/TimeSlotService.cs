@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Miritush.DAL.Model;
 using Miritush.DTO;
+using Miritush.DTO.Const;
 using Miritush.Services.Abstract;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,16 @@ namespace Miritush.Services
     {
         private readonly booksDbContext dbContext;
         private readonly IMapper mapper;
+        private readonly ISettingsService settingsService;
 
         public TimeSlotService(
             booksDbContext dbContext,
-            IMapper mapper)
+            IMapper mapper,
+            ISettingsService settingsService)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.settingsService = settingsService;
         }
 
         public async Task<List<TimeSlot>> GetTimeSlotsAsync(
@@ -35,8 +39,8 @@ namespace Miritush.Services
             if (workHour == null)
                 return new List<TimeSlot>();
 
-            var MIN_AFTER_WORK = await dbContext.Settings.FindAsync("MIN_AFTER_WORK");
-            var minAfterWork = int.Parse(MIN_AFTER_WORK.SettingValue);
+            var minAfterWorkValue = await settingsService.GetValue(SettingsNames.MIN_AFTER_WORK);
+            var minAfterWork = int.Parse(minAfterWorkValue);
 
             var timeSlotList = GenerateTimeSlots(workHour);
             if (date.Date == DateTime.UtcNow.Date)
@@ -47,10 +51,12 @@ namespace Miritush.Services
                     .ToList();
             }
             var books = await dbContext.Books
+                .AsNoTracking()
                 .Where(x => x.StartDate.Date == date.Date)
                 .ToListAsync();
 
             var LockHours = await dbContext.Lockhours
+                .AsNoTracking()
                 .Where(x => x.StartDate.Date == date.Date)
                 .ToListAsync();
 

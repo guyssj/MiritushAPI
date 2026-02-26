@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Miritush.API.Attributes;
 using Miritush.API.Model;
@@ -36,6 +36,22 @@ namespace Miritush.API.Controllers
         public Task<List<DTO.Customer>> Get()
         {
             return _customerService.GetCustomersAsync();
+        }
+
+        /// <summary>
+        /// Get Customers with pagination
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="cancelToken"></param>
+        /// <returns></returns>
+        [HttpGet("paged")]
+        public Task<ListResult<DTO.Customer>> GetPaged(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 50,
+            CancellationToken cancelToken = default)
+        {
+            return _customerService.GetCustomersPagedAsync(pageNumber, pageSize, cancelToken);
         }
 
         /// <summary>

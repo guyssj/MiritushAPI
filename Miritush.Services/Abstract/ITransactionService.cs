@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Miritush.DTO;
 
 namespace Miritush.Services.Abstract
 {
@@ -12,6 +13,10 @@ namespace Miritush.Services.Abstract
         /// <param name="cacnelToken"></param>
         /// <returns></returns>
         Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cacnelToken = default);
+        Task<ListResult<DTO.Transaction>> GetTransactionsPagedAsync(
+            int pageNumber,
+            int pageSize,
+            CancellationToken cacnelToken = default);
         /// <summary>
         /// get transaction by id
         /// </summary>
