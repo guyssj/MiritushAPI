@@ -15,11 +15,12 @@ namespace Miritush.Services
     {
         private readonly booksDbContext dbContext;
         private readonly IMapper mapper;
-
-        public TransactionService(booksDbContext dbContext, IMapper mapper)
+        private readonly ICustomerTimelineService customerTimelineService;
+        public TransactionService(booksDbContext dbContext, IMapper mapper, ICustomerTimelineService customerTimelineService)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.customerTimelineService = customerTimelineService;
         }
 
         public async Task<List<DTO.Transaction>> GetTransactionsAsync(CancellationToken cacnelToken = default)
@@ -88,7 +89,9 @@ namespace Miritush.Services
 
             dbContext.Transactions.Add(transaction);
             await dbContext.SaveChangesAsync(cacnelToken);
-
+            await customerTimelineService
+                    .SaveTimeLine(customerId, DTO.Enums.TimelineType.Transaction, "Transaction created")
+                    .ConfigureAwait(false);
             return mapper.Map<DTO.Transaction>(transaction);
         }
 

@@ -78,7 +78,8 @@ namespace Miritush.Services.DomainProfile
                     Duration = x.Durtion,
                     StartDate = x.StartDate,
                     StartAt = x.StartAt,
-                    Notes = x.Notes
+                    Notes = x.Notes,
+                    Arrival = (DTO.Enums.ArrivalConfirm)x.ArrivalStatus
                 }))
                 .ForMember(x => x.StartTime, config => config.MapFrom(
                      x => x.StartDate.AddMinutes(x.StartAt)))

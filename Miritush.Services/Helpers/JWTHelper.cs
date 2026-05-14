@@ -26,15 +26,16 @@ namespace Miritush.Services.Helpers
                 };
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            var tokenDesc = new SecurityTokenDescriptor()
+            var keyBytes = Encoding.UTF8.GetBytes(secret ?? string.Empty);
+            var authSigningKey = new SymmetricSecurityKey(keyBytes);
+            var tokenDesc = new SecurityTokenDescriptor
             {
                 Audience = "http://miritush.com/NailBook",
                 Issuer = issuer,
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddHours(3),
                 Subject = new ClaimsIdentity(authClaims),
-                SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha512Signature)
+                SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDesc);
              

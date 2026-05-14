@@ -171,7 +171,7 @@ namespace Miritush.API.Controllers
         public async Task<DTO.Customer> Update(int id, [FromBody] CustomerData data)
         {
             return await _customerService.UpdateCustomerAsync(
-                 data.Id,
+                 id,
                  data.FirstName,
                  data.LastName,
                  data.PhoneNumber,
